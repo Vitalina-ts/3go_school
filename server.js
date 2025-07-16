@@ -1,14 +1,20 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const cors = require('cors');
+require('dotenv').config();
+
 const app = express();
 
 // Middleware
+app.use(cors()); // Enable CORS for cross-origin requests
 app.use(express.json());
-app.use(express.static('public')); // Serve static files (e.g., HTML, CSS)
+app.use(express.static('public')); // Serve static files (e.g., HTML, CSS, JS)
 
 // MongoDB connection
-mongoose.connect('mongodb://localhost:27017/skillbridge', {
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/skillbridge';
+mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => console.log('Connected to MongoDB'))
@@ -18,6 +24,7 @@ mongoose.connect('mongodb://localhost:27017/skillbridge', {
 const userSchema = new mongoose.Schema({
     name: String,
     email: String,
+    password: String,
     registered: Date,
     language: String,
     courses: [{
@@ -87,19 +94,121 @@ const authenticateToken = (req, res, next) => {
     const token = req.headers['authorization']?.split(' ')[1];
     if (!token) return res.status(401).json({ message: 'Токен не надано' });
 
-    jwt.verify(token, 'your-secret-key', (err, user) => {
+    jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key', (err, user) => {
         if (err) return res.status(403).json({ message: 'Недійсний токен' });
         req.user = user;
         next();
     });
 };
 
+// Registration API endpoint
+app.post('/api/register', async (req, res) => {
+    try {
+        const { name, email, password } = req.body;
+        
+        // Validate input
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: 'Усі поля є обов’язковими' });
+        }
+
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: 'Користувач з такою поштою вже існує' });
+        }
+
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create new user
+        const user = new User({
+            name,
+            email,
+            password: hashedPassword,
+            registered: new Date(),
+            language: 'uk',
+            courses: [],
+            schedule: []
+        });
+
+        await user.save();
+        
+        // Generate JWT token
+        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET || 'your-secret-key', { expiresIn: '1h' });
+        
+        res.status(201).json({ 
+            message: 'Реєстрація успішна',
+            token,
+            user: {
+                name: user.name,
+                email: user.email,
+                registered: user.registered
+            }
+        });
+    } catch (error) {
+        console.error('Error during registration:', error);
+        res.status(500).json({ message: 'Помилка сервера' });
+    }
+});
+
+// Login API endpoint
+app.post('/api/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Validate input
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Електронна пошта та пароль є обов’язковими' });
+        }
+
+        // Check if user exists
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({ message: 'Неправильна пошта або пароль' });
+        }
+
+        // Compare password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Неправильна пошта або пароль' });
+        }
+
+        // Generate JWT token
+        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET || 'your-secret-key', { expiresIn: '1h' });
+
+        res.status(200).json({
+            message: 'Вхід успішний',
+            token,
+            user: {
+                name: user.name,
+                email: user.email,
+                registered: user.registered
+            }
+        });
+    } catch (error) {
+        console.error('Error during login:', error);
+        res.status(500).json({ message: 'Помилка сервера' });
+    }
+});
+
 // Profile API endpoint
 app.get('/api/profile', authenticateToken, async (req, res) => {
     try {
-        const user = await User.findOne({ email: req.user.email });
+        const user = await User.findOne({ email: req.user.email }, 'name email registered language courses schedule');
         if (!user) return res.status(404).json({ message: 'Користувача не знайдено' });
-        res.json(user);
+
+        // Fetch reviews authored by the user
+        const reviews = await Review.find({ author: user.name }, 'text');
+
+        res.json({
+            name: user.name,
+            email: user.email,
+            registered: user.registered,
+            language: user.language,
+            courses: user.courses,
+            schedule: user.schedule,
+            reviews: reviews.map(review => review.text)
+        });
     } catch (error) {
         console.error('Error fetching profile:', error);
         res.status(500).json({ message: 'Помилка сервера' });
