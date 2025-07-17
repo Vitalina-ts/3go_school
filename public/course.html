@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Курси | SkillBridge</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+    .hero-bg {
+      background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+      background-size: cover;
+      background-position: center;
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+    }
+    .menu-slide {
+      transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    .menu-slide.open {
+      max-height: 500px;
+      opacity: 1;
+    }
+    .hamburger div {
+      transition: all 0.3s ease;
+    }
+    .hamburger.open .bar1 {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .hamburger.open .bar2 {
+      opacity: 0;
+    }
+    .hamburger.open .bar3 {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+    section {
+      padding-top: 96px;
+    }
+    .course-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: linear-gradient(145deg, #1f2937, #374151);
+    }
+    .course-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    }
+    .btn-cta {
+      background: linear-gradient(to right, #2563eb, #a855f7);
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+    .btn-cta:hover {
+      transform: scale(1.05);
+      background: linear-gradient(to right, #1e40af, #7e22ce);
+    }
+    .gradient-text {
+      background: linear-gradient(to right, #2563eb, #a855f7);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      display: inline-block;
+    }
+    @supports (-webkit-background-clip: text) {
+      .gradient-text {
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
+    @supports not (-webkit-background-clip: text) {
+      .gradient-text {
+        color: #2563eb;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+  <!-- Навігація -->
+  <nav class="fixed top-0 w-full bg-gradient-to-r from-blue-700 to-purple-600 text-white py-4 z-50 shadow-2xl">
+    <div class="container mx-auto px-4 flex justify-between items-center">
+      <a href="/" class="text-2xl font-bold">SkillBridge 🌟</a>
+      <div class="hidden md:flex space-x-6">
+        <a href="home.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Головна</a>
+                    <a href="about.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Про нас</a>
+                    <a href="course.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Курси</a>
+                    <a href="math.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Математика</a>
+                    <a href="programming.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Програмування</a>
+                    <a href="blog.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Блог</a>
+                    <a href="login.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
+      </div>
+      <button id="hamburger-btn" class="md:hidden flex flex-col space-y-1 hamburger">
+        <div class="bar1 w-6 h-1 bg-white rounded"></div>
+        <div class="bar2 w-6 h-1 bg-white rounded"></div>
+        <div class="bar3 w-6 h-1 bg-white rounded"></div>
+      </button>
+    </div>
+    <div id="mobile-menu" class="md:hidden menu-slide mt-4 px-4 bg-gray-800 rounded-lg">
+      <a href="home.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Головна</a>
+                    <a href="about.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Про нас</a>
+                    <a href="course.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Курси</a>
+                    <a href="math.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Математика</a>
+                    <a href="programming.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Програмування</a>
+                    <a href="blog.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Блог</a>
+                    <a href="login.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero-bg text-white text-center">
+    <div class="container mx-auto px-4 py-16">
+      <h1 class="text-5xl font-extrabold mb-6 gradient-text">Наші курси</h1>
+      <p class="text-xl max-w-3xl mx-auto text-gray-300 leading-relaxed">Перший пробний урок — безкоштовний, тривалістю 30 хвилин! На ньому ми проаналізуємо рівень ваших знань та розглянемо одну тему. Після уроку на вас чекатиме невеличке домашнє завдання!</p>
+    </div>
+  </section>
+
+  <!-- Математика -->
+  <section id="math" class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-extrabold mb-12 text-center gradient-text">Математика</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- Підготовка до ЗНО/НМТ -->
+        <div class="course-card border-2 border-blue-900 rounded-xl p-6 shadow-lg">
+          <h3 class="text-2xl font-semibold text-gray-100 mb-4">Підготовка до ЗНО/НМТ</h3>
+          <p class="text-gray-400 mb-4">Інтенсивний курс для успішного складання ЗНО/НМТ. Покриваємо всі теми: алгебра, геометрія, тригонометрія, ймовірність.</p>
+          <ul class="list-disc list-inside text-gray-400 mb-6 space-y-2">
+            <li>Формат: групові (до 8 учнів) або індивідуальні заняття</li>
+            <li>Тривалість: 9 місяців (групові), гнучкий графік (індивидуальні)</li>
+            <li>Практика: тести, задачі, симуляції іспитів</li>
+          </ul>
+          <h4 class="text-lg font-semibold text-gray-100 mb-2">Розклад</h4>
+          <p class="text-gray-400 mb-4">Групові: Вт, Чт 18:00–19:00; Індивидуальні: за домовленістю</p>
+          <h4 class="text-lg font-semibold text-gray-100 mb-2">Ціни</h4>
+          <p class="text-gray-400 mb-6">Групові: 200 грн/заняття; Індивидуальні: 400 грн/заняття</p>
+          <div class="max-w-md mx-auto bg-gray-800 rounded-xl p-6 shadow-lg border-2 border-blue-900">
+            <h4 class="text-lg font-semibold text-gray-100 mb-4">Запис на курс</h4>
+            <div class="space-y-4">
+              <input type="text" placeholder="Ім’я" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400" id="math-zno-name">
+              <input type="text" placeholder="Телефон/Telegram" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400" id="math-zno-contact">
+              <select class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100" id="math-zno-format">
+                <option value="">Оберіть формат</option>
+                <option value="Групові заняття">Групові заняття</option>
+                <option value="Індивидуальні заняття">Індивидуальні заняття</option>
+              </select>
+              <button class="w-full btn-cta text-white" id="math-zno-submit">Відправити заявку</button>
+            </div>
+          </div>
+        </div>
+        <!-- Програми для 1–11 класів -->
+        <div class="course-card border-2 border-blue-900 rounded-xl p-6 shadow-lg">
+          <h3 class="text-2xl font-semibold text-gray-100 mb-4">Програми для 1–11 класів</h3>
+          <p class="text-gray-400 mb-4">Покращення знань з математики, підготовка до контрольних робіт та іспитів. Індивідуальний підхід до кожного учня.</p>
+          <ul class="list-disc list-inside text-gray-400 mb-6 space-y-2">
+            <li>Формат: групові (до 10 учнів) або індивідуальні заняття</li>
+            <li>Теми: арифметика, алгебра, геометрія, логіка</li>
+            <li>Практика: задачі, інтерактивні вправи, домашні завдання</li>
+          </ul>
+          <h4 class="text-lg font-semibold text-gray-100 mb-2">Розклад</h4>
+          <p class="text-gray-400 mb-4">Групові: Пн, Ср 17:00–18:00; Індивидуальні: за домовленістю</p>
+          <h4 class="text-lg font-semibold text-gray-100 mb-2">Ціни</h4>
+          <p class="text-gray-400 mb-6">Групові: 200 грн/заняття; Індивидуальні: 400 грн/заняття</p>
+          <div class="max-w-md mx-auto bg-gray-800 rounded-xl p-6 shadow-lg border-2 border-blue-900">
+            <h4 class="text-lg font-semibold text-gray-100 mb-4">Запис на курс</h4>
+            <div class="space-y-4">
+              <input type="text" placeholder="Ім’я" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400" id="math-1-11-name">
+              <input type="text" placeholder="Телефон/Telegram" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400" id="math-1-11-contact">
+              <select class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100" id="math-1-11-format">
+                <option value="">Оберіть формат</option>
+                <option value="Групові заняття">Групові заняття</option>
+                <option value="Індивидуальні заняття">Індивидуальні заняття</option>
+              </select>
+              <button class="w-full btn-cta text-white" id="math-1-11-submit">Відправити заявку</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Програмування -->
+  <section id="programming" class="py-16 bg-gray-900">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-extrabold mb-12 text-center gradient-text">Програмування</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Scratch -->
+        <div class="course-card border-2 border-blue-900 rounded-xl p-6 shadow-lg">
+          <h3 class="text-2xl font-semibold text-gray-100 mb-4">Scratch (8–12 років)</h3>
+          <p class="text-gray-400 mb-4">Веселе введення в програмування через створення ігор та анімацій. Ідеально для дітей 9–12 років.</p>
+          <ul class="list-disc list-inside text-gray-400 mb-6 space-y-2">
+            <li>Формат: групові (до 8 учнів) або індивідуальні заняття</li>
+            <li>Практика: створення ігор, анімацій, історій</li>
+            <li>Тривалість: 3 місяці (групові), гнучкий графік (індивидуальні)</li>
+          </ul>
+          <h4 class="text-lg font-semibold text-gray-100 mb-2">Розклад</h4>
+          <p class="text-gray-400 mb-4">Групові: Сб, Нд 10:00–11:30; Індивидуальні: за домовленістю</p>
+          <h4 class="text-lg font-semibold text-gray-100 mb-2">Ціни</h4>
+          <p class="text-gray-400 mb-6">Групові: 200 грн/заняття; Індивидуальні: 400 грн/заняття</p>
+          <div class="max-w-md mx-auto bg-gray-800 rounded-xl p-6 shadow-lg border-2 border-blue-900">
+            <h4 class="text-lg font-semibold text-gray-100 mb-4">Запис на курс</h4>
+            <div class="space-y-4">
+              <input type="text" placeholder="Ім’я" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400" id="scratch-name">
+              <input type="text" placeholder="Телефон/Telegram" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400" id="scratch-contact">
+              <select class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100" id="scratch-format">
+                <option value="">Оберіть формат</option>
+                <option value="Групові заняття">Групові заняття</option>
+                <option value="Індивидуальні заняття">Індивидуальні заняття</option>
+              </select>
+              <button class="w-full btn-cta text-white" id="scratch-submit">Відправити заявку</button>
+            </div>
+          </div>
+        </div>
+        <!-- Python -->
+        <div class="course-card border-2 border-blue-900 rounded-xl p-6 shadow-lg">
+          <h3 class="text-2xl font-semibold text-gray-100 mb-4">Python (13+ років)</h3>
+          <p class="text-gray-400 mb-4">Вивчення Python через практичні проєкти: від основ до створення власних програм.</p>
+          <ul class="list-disc list-inside text-gray-400 mb-6 space-y-2">
+            <li>Формат: групові (до 8 учнів) або індивідуальні заняття</li>
+            <li>Практика: створення ігор, аналіз даних, автоматизація</li>
+            <li>Тривалість: 6 місяців (групові), гнучкий графік (індивидуальні)</li>
+          </ul>
+          <h4 class="text-lg font-semibold text-gray-100 mb-2">Розклад</h4>
+          <p class="text-gray-400 mb-4">Групові: Вт, Пт 19:00–20:30; Індивидуальні: за домовленістю</p>
+          <h4 class="text-lg font-semibold text-gray-100 mb-2">Ціни</h4>
+          <p class="text-gray-400 mb-6">Групові: 200 грн/заняття; Індивидуальні: 400 грн/заняття</p>
+          <div class="max-w-md mx-auto bg-gray-800 rounded-xl p-6 shadow-lg border-2 border-blue-900">
+            <h4 class="text-lg font-semibold text-gray-100 mb-4">Запис на курс</h4>
+            <div class="space-y-4">
+              <input type="text" placeholder="Ім’я" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400" id="python-name">
+              <input type="text" placeholder="Телефон/Telegram" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400" id="python-contact">
+              <select class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100" id="python-format">
+                <option value="">Оберіть формат</option>
+                <option value="Групові заняття">Групові заняття</option>
+                <option value="Індивидуальні заняття">Індивидуальні заняття</option>
+              </select>
+              <button class="w-full btn-cta text-white" id="python-submit">Відправити заявку</button>
+            </div>
+          </div>
+        </div>
+        <!-- Web -->
+        <div class="course-card border-2 border-blue-900 rounded-xl p-6 shadow-lg">
+          <h3 class="text-2xl font-semibold text-gray-100 mb-4">Web (HTML/CSS/JS)</h3>
+          <p class="text-gray-400 mb-4">Створення власних сайтів із використанням HTML, CSS та JavaScript. Практика від простих сторінок до інтерактивних проєктів.</p>
+          <ul class="list-disc list-inside text-gray-400 mb-6 space-y-2">
+            <li>Формат: групові (до 8 учнів) або індивідуальні заняття</li>
+            <li>Практика: створення сайтів, анімацій, інтерактивних елементів</li>
+            <li>Тривалість: 4 місяці (групові), гнучкий графік (індивидуальні)</li>
+          </ul>
+          <h4 class="text-lg font-semibold text-gray-100 mb-2">Розклад</h4>
+          <p class="text-gray-400 mb-4">Групові: Ср, Пт 18:00–19:30; Індивидуальні: за домовленістю</p>
+          <h4 class="text-lg font-semibold text-gray-100 mb-2">Ціни</h4>
+          <p class="text-gray-400 mb-6">Групові: 200 грн/заняття; Індивидуальні: 400 грн/заняття</p>
+          <div class="max-w-md mx-auto bg-gray-800 rounded-xl p-6 shadow-lg border-2 border-blue-900">
+            <h4 class="text-lg font-semibold text-gray-100 mb-4">Запис на курс</h4>
+            <div class="space-y-4">
+              <input type="text" placeholder="Ім’я" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400" id="web-name">
+              <input type="text" placeholder="Телефон/Telegram" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400" id="web-contact">
+              <select class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100" id="web-format">
+                <option value="">Оберіть формат</option>
+                <option value="Групові заняття">Групові заняття</option>
+                <option value="Індивидуальні заняття">Індивидуальні заняття</option>
+              </select>
+              <button class="w-full btn-cta text-white" id="web-submit">Відправити заявку</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-r from-blue-700 to-purple-600 text-white py-8">
+    <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <h3>Контакти</h3>
+        <p class="text-white">📞 +380 123 456 789</p>
+        <p class="text-white">📧 info@skillbridge.ua</p>
+        <p class="text-white">Telegram: @SkillBridge</p>
+        <p class="text-white">Instagram: @SkillBridgeUA</p>
+      </div>
+      <div>
+        <h3>Інформація</h3>
+        <a href="privac.html" class="block text-white hover:text-blue-300 transition duration-200">Політика конфіденційності</a>
+      </div>
+    </div>
+    <p class="text-center mt-8 text-white">© 2025 SkillBridge. Усі права захищено.</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Функція для обробки відправки форми
+      const handleSubmit = async (nameId, contactId, formatId, course) => {
+        const name = document.getElementById(nameId).value.trim();
+        const contact = document.getElementById(contactId).value.trim();
+        const format = document.getElementById(formatId).value;
+        const date = new Date().toISOString();
+
+        console.log('Відправлення даних:', { name, contact, format, course, date });
+
+        if (!name || !contact || !format) {
+          alert('Будь ласка, заповніть усі поля');
+          return;
+        }
+
+        try {
+          const response = await fetch('http://localhost:3000/api/purchase', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, contact, format, course, date })
+          });
+
+          console.log('Статус відповіді:', response.status);
+          const result = await response.json();
+          console.log('Відповідь сервера:', result);
+
+          if (response.ok) {
+            alert(result.message);
+            document.getElementById(nameId).value = '';
+            document.getElementById(contactId).value = '';
+            document.getElementById(formatId).value = '';
+          } else {
+            alert(result.message || 'Помилка при надсиланні форми');
+          }
+        } catch (err) {
+          console.error('Помилка запиту:', err);
+          alert('Сталася помилка. Перевірте консоль браузера для деталей.');
+        }
+      };
+
+      // Обробка форм для кожного курсу
+      document.getElementById('math-zno-submit').addEventListener('click', (e) => {
+        e.preventDefault();
+        handleSubmit('math-zno-name', 'math-zno-contact', 'math-zno-format', 'Підготовка до ЗНО/НМТ');
+      });
+
+      document.getElementById('math-1-11-submit').addEventListener('click', (e) => {
+        e.preventDefault();
+        handleSubmit('math-1-11-name', 'math-1-11-contact', 'math-1-11-format', 'Програми для 1–11 класів');
+      });
+
+      document.getElementById('scratch-submit').addEventListener('click', (e) => {
+        e.preventDefault();
+        handleSubmit('scratch-name', 'scratch-contact', 'scratch-format', 'Scratch (8–12 років)');
+      });
+
+      document.getElementById('python-submit').addEventListener('click', (e) => {
+        e.preventDefault();
+        handleSubmit('python-name', 'python-contact', 'python-format', 'Python (13+ років)');
+      });
+
+      document.getElementById('web-submit').addEventListener('click', (e) => {
+        e.preventDefault();
+        handleSubmit('web-name', 'web-contact', 'web-format', 'Web (HTML/CSS/JS)');
+      });
+
+      // Навігація
+      const hamburger = document.getElementById('hamburger-btn');
+      const menu = document.getElementById('mobile-menu');
+
+      hamburger.addEventListener('click', () => {
+        menu.classList.toggle('open');
+        hamburger.classList.toggle('open');
+      });
+
+      menu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          menu.classList.remove('open');
+          hamburger.classList.remove('open');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

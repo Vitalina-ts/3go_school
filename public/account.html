@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профіль користувача - SkillBridge</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .menu-slide {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .menu-slide.open {
+            max-height: 500px;
+            opacity: 1;
+        }
+        .hamburger div {
+            transition: all 0.3s ease;
+        }
+        .hamburger.open .bar1 {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.open .bar2 {
+            opacity: 0;
+        }
+        .hamburger.open .bar3 {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+        section {
+            padding-top: 96px;
+        }
+        .profile-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: linear-gradient(145deg, #1f2937, #374151);
+        }
+        .profile-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        .btn-cta {
+            transition: transform 0.3s ease;
+        }
+        .btn-cta:hover {
+            transform: scale(1.05);
+            background: linear-gradient(to right, #2563eb, #a855f7);
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #2563eb, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .calendar-event, .message-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: linear-gradient(145deg, #1f2937, #374151);
+        }
+        .calendar-event:hover, .message-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full bg-gradient-to-r from-blue-700 to-purple-600 text-white py-4 z-50 shadow-2xl">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <a href="/" class="text-3xl font-extrabold tracking-tight">SkillBridge 🌟</a>
+                <button id="hamburger-btn" class="md:hidden flex flex-col space-y-1 hamburger">
+                    <div class="bar1 w-8 h-1 bg-white rounded"></div>
+                    <div class="bar2 w-8 h-1 bg-white rounded"></div>
+                    <div class="bar3 w-8 h-1 bg-white rounded"></div>
+                </button>
+            </div>
+            <div id="mobile-menu" class="menu-slide md:hidden">
+                <ul class="flex flex-col space-y-2 mt-4">
+                    
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile Section -->
+    <section class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-100 gradient-text">Ваш профіль</h2>
+            <div class="max-w-3xl mx-auto profile-card border-2 border-blue-900 rounded-xl p-8 shadow-lg">
+                <!-- Greeting -->
+                <div class="mb-8 text-center">
+                    <h3 id="greeting" class="text-3xl font-semibold text-gray-100 mb-2 gradient-text">Привіт, Користувач!</h3>
+                    <p class="text-gray-400">Ідемо до нових звершень!</p>
+                </div>
+
+                <!-- Personal Details -->
+                <div class="mb-8">
+                    <h4 class="text-2xl font-semibold text-gray-100 mb-4">Особиста інформація</h4>
+                    <div class="space-y-2 text-gray-300">
+                        <p><strong>Ім’я:</strong> <span id="user-fullname"></span></p>
+                        <p><strong>Електронна пошта:</strong> <span id="user-email-details"></span></p>
+                        <p><strong>Дата реєстрації:</strong> <span id="user-registered"></span></p>
+                        <p><strong>Мова навчання:</strong> <span id="user-language"></span></p>
+                    </div>
+                </div>
+
+                <!-- My Courses -->
+                <div class="mb-8">
+                    <h4 class="text-2xl font-semibold text-gray-100 mb-4">Мої курси</h4>
+                    <div id="courses-list" class="space-y-6"></div>
+                </div>
+
+                <!-- Messages -->
+                <div class="mb-8">
+                    <h4 class="text-2xl font-semibold text-gray-100 mb-4">Повідомлення</h4>
+                    <div id="messages-list" class="space-y-4"></div>
+                </div>
+
+                <!-- Calendar -->
+                <div>
+                    <h4 class="text-2xl font-semibold text-gray-100 mb-4">Календар уроків</h4>
+                    <div id="calendar-list" class="grid grid-cols-1 gap-4"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-blue-700 to-purple-600 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Контакти</h3>
+                    <p>Телефон: +380 123 456 789</p>
+                    <p>Email: info@skillbridge.ua</p>
+                    <p>Telegram: @SkillBridge</p>
+                    <p>Instagram: @SkillBridgeUA</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Інформація</h3>
+                    <a href="privacy.html" class="block hover:text-blue-300 transition duration-200">Політика конфіденційності</a>
+                </div>
+            </div>
+            <p class="text-center mt-8 text-gray-300">© 2025 SkillBridge. Усі права захищено.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Hamburger menu toggle
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        hamburgerBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+            hamburgerBtn.classList.toggle('open');
+        });
+
+        // Function to fetch profile data
+        async function fetchProfileData() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    console.error('No token found in localStorage');
+                    alert('Будь ласка, увійдіть у систему');
+                    window.location.href = '/login.html';
+                    return null;
+                }
+
+                const response = await fetch('/api/profile', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('Profile fetch error:', response.status, errorData.message);
+                    throw new Error(errorData.message || 'Помилка при отриманні даних профілю');
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+                alert(error.message || 'Помилка сервера. Спробуйте пізніше.');
+                return null;
+            }
+        }
+
+        // Function to populate profile data
+        async function populateProfile() {
+            try {
+                const profileData = await fetchProfileData();
+                if (!profileData) return;
+
+                // Populate greeting
+                document.getElementById('greeting').textContent = `Привіт, ${profileData.name}!`;
+                document.getElementById('user-fullname').textContent = profileData.name;
+                document.getElementById('user-email-details').textContent = profileData.email;
+                document.getElementById('user-registered').textContent = new Date(profileData.registered).toLocaleDateString('uk-UA');
+                document.getElementById('user-language').textContent = profileData.language;
+
+                // Populate courses from users.courses
+                const coursesList = document.getElementById('courses-list');
+                coursesList.innerHTML = '';
+                if (profileData.courses && profileData.courses.length > 0) {
+                    profileData.courses.forEach(course => {
+                        const courseItem = document.createElement('div');
+                        courseItem.className = 'calendar-event border-2 border-blue-900 rounded-lg p-4';
+                        courseItem.innerHTML = `
+                            <p class="text-gray-100 font-semibold">${course.name}</p>
+                            ${course.meetLink ? `<p class="text-gray-400 text-sm">Посилання на зустріч: <a href="${course.meetLink}" target="_blank" class="text-blue-400 hover:underline">Перейти</a></p>` : ''}
+                            ${course.materialsLink ? `<p class="text-gray-400 text-sm">Матеріали: <a href="${course.materialsLink}" target="_blank" class="text-blue-400 hover:underline">Перейти</a></p>` : ''}
+                        `;
+                        coursesList.appendChild(courseItem);
+                    });
+                } else {
+                    coursesList.innerHTML = '<p class="text-gray-400">Ви ще не записані на жоден курс.</p>';
+                }
+
+                // Populate messages from reviews
+                const messagesList = document.getElementById('messages-list');
+                messagesList.innerHTML = '';
+                if (profileData.reviews && profileData.reviews.length > 0) {
+                    profileData.reviews.forEach(review => {
+                        const messageItem = document.createElement('div');
+                        messageItem.className = 'message-card border-2 border-blue-900 rounded-lg p-4';
+                        messageItem.innerHTML = `
+                            <p class="text-gray-100">${review}</p>
+                            <p class="text-gray-400 text-sm">Автор: ${profileData.name}</p>
+                        `;
+                        messagesList.appendChild(messageItem);
+                    });
+                } else {
+                    messagesList.innerHTML = '<p class="text-gray-400">Немає повідомлень.</p>';
+                }
+
+                // Populate calendar
+                const calendarList = document.getElementById('calendar-list');
+                calendarList.innerHTML = '';
+                if (profileData.schedule && profileData.schedule.length > 0) {
+                    profileData.schedule.forEach(event => {
+                        const eventItem = document.createElement('div');
+                        eventItem.className = 'calendar-event border-2 border-blue-900 rounded-lg p-4';
+                        eventItem.innerHTML = `
+                            <p class="text-gray-100 font-semibold">${event.title}</p>
+                            <p class="text-gray-400 text-sm">Курс: ${event.courseName}</p>
+                            <p class="text-gray-400 text-sm">Дата: ${new Date(event.date).toLocaleString('uk-UA')}</p>
+                            ${event.meetLink ? `<p class="text-gray-400 text-sm">Посилання на зустріч: <a href="${event.meetLink}" target="_blank" class="text-blue-400 hover:underline">Перейти</a></p>` : ''}
+                        `;
+                        calendarList.appendChild(eventItem);
+                    });
+                } else {
+                    calendarList.innerHTML = '<p class="text-gray-400">Немає запланованих уроків.</p>';
+                }
+            } catch (error) {
+                console.error('Error populating profile:', error);
+            }
+        }
+
+        // Fetch and populate data on page load
+        document.addEventListener('DOMContentLoaded', populateProfile);
+    </script>
+</body>
+</html>

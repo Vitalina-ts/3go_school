@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Про нас | SkillBridge</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+    }
+    .hero-bg {
+      background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+      background-size: cover;
+      background-position: center;
+    }
+    .menu-slide {
+      transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+    }
+    .menu-slide.open {
+      max-height: 500px;
+      opacity: 1;
+    }
+    .hamburger div {
+      transition: all 0.3s ease;
+    }
+    .hamburger.open .bar1 {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .hamburger.open .bar2 {
+      opacity: 0;
+    }
+    .hamburger.open .bar3 {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+    section {
+      padding-top: 96px; /* Відступ для фіксованої навігації */
+    }
+    .hover-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      background: linear-gradient(145deg, #1f2937, #374151);
+    }
+    .hover-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+    .btn-cta {
+      background: linear-gradient(to right, #2563eb, #a855f7);
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      transition: transform 0.3s ease, background 0.3s ease;
+    }
+    .btn-cta:hover {
+      transform: scale(1.05);
+      background: linear-gradient(to right, #1e40af, #7e22ce);
+    }
+    .gradient-text {
+      background: linear-gradient(to right, #2563eb, #a855f7);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      display: inline-block;
+    }
+    @supports (-webkit-background-clip: text) {
+      .gradient-text {
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+    }
+    @supports not (-webkit-background-clip: text) {
+      .gradient-text {
+        color: #2563eb; /* Резервний колір */
+      }
+    }
+    .project-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+    @media (min-width: 768px) {
+      .project-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+  <!-- Навігація -->
+  <nav class="fixed top-0 w-full bg-gradient-to-r from-blue-700 to-purple-600 text-white py-4 z-50 shadow-2xl">
+    <div class="container mx-auto px-4 flex justify-between items-center">
+      <a href="/" class="text-2xl font-bold">SkillBridge 🌟</a>
+      <div class="hidden md:flex space-x-6">
+        <a href="home.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Головна</a>
+                    <a href="about.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Про нас</a>
+                    <a href="course.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Курси</a>
+                    <a href="math.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Математика</a>
+                    <a href="programming.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Програмування</a>
+                    <a href="blog.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Блог</a>
+                    <a href="login.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
+      </div>
+      <button id="hamburger-btn" class="md:hidden flex flex-col space-y-1 hamburger">
+        <div class="bar1 w-6 h-1 bg-white rounded"></div>
+        <div class="bar2 w-6 h-1 bg-white rounded"></div>
+        <div class="bar3 w-6 h-1 bg-white rounded"></div>
+      </button>
+    </div>
+    <div id="mobile-menu" class="md:hidden menu-slide mt-4 px-4 bg-gray-800 rounded-lg">
+     <a href="home.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Головна</a>
+                    <a href="about.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Про нас</a>
+                    <a href="course.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Курси</a>
+                    <a href="math.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Математика</a>
+                    <a href="programming.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Програмування</a>
+                    <a href="blog.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Блог</a>
+                    <a href="login.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero-bg text-white py-24">
+    <div class="container mx-auto px-4">
+      <h1 class="text-5xl font-extrabold mb-6 gradient-text">Про нас</h1>
+      <p class="text-xl max-w-3xl text-gray-300 leading-relaxed">SkillBridge — це освітня платформа, де поєднуються сучасне викладання математики та програмування. Ми допомагаємо учням не лише вчити, а й розуміти та створювати.</p>
+    </div>
+  </section>
+
+  <!-- Математика + Програмування -->
+  <section class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl font-extrabold mb-8 gradient-text"> Математика + Програмування = Результат</h2>
+      <p class="text-lg text-gray-300 mb-4 leading-relaxed">У SkillBridge ми переконані, що найкраще навчання відбувається тоді, коли знання одразу застосовуються на практиці. Ми не просто пояснюємо абстрактні поняття — ми перетворюємо їх на реальні ситуації, задачі та проєкти.</p>
+      <p class="text-lg text-gray-300 mb-4 leading-relaxed">Математичні формули оживають у коді, а теореми знаходять місце в іграх, візуалізаціях і реальних обчисленнях. Наприклад, тема «відсотки» — це не суха формула, а калькулятор знижок або прибутків. Ймовірність — це не абстракція, а симуляція гри в кості або аналіз випадкових подій у Python.</p>
+      <h3 class="text-2xl font-semibold mt-10 mb-6 gradient-text"> Практичні проєкти</h3>
+      <div class="project-grid">
+        <div class="hover-card p-6 rounded-lg border-2 border-blue-900">
+          <h4 class="text-xl font-medium mb-4 text-gray-100">Математика в дії</h4>
+          <ul class="list-disc list-inside text-gray-400 space-y-2">
+            <li>Побудова графіків функцій у Python або GeoGebra</li>
+            <li>Аналіз реальних статистичних даних</li>
+            <li>Моделювання ймовірності: ігри, експерименти</li>
+            <li>Фінансова математика: кредити, відсотки, калькулятори</li>
+          </ul>
+        </div>
+        <div class="hover-card p-6 rounded-lg border-2 border-blue-900">
+          <h4 class="text-xl font-medium mb-4 text-gray-100">Програмування через задачі</h4>
+          <ul class="list-disc list-inside text-gray-400 space-y-2">
+            <li>Математичні ігри: вікторини, задачі, "вгадай число"</li>
+            <li>Базові алгоритми: сортування, пошук</li>
+            <li>Чат-боти-помічники для тренування</li>
+            <li>Вебтести і тренажери для закріплення тем</li>
+          </ul>
+        </div>
+      </div>
+
+<section >
+      <div class="container mx-auto px-4">
+            <p class="text-lg text-gray-300 mb-4 leading-relaxed">Такий підхід допомагає учням краще зрозуміти суть матеріалу, бачити логіку та сенс у тому, що вони вивчають. Ми навчаємо не "для оцінки", а для впевненості, для життя, для розвитку.</p>
+      <p class="text-lg text-gray-300 mb-4 leading-relaxed">Кожна тема — це міні-проєкт, де знання з математики та програмування працюють разом. Це не лише цікаво, але й корисно: формуються навички, які знадобляться у школі, університеті, кар’єрі.</p>
+    </div>
+\
+      <h3 class="text-2xl font-semibold mt-10 mb-4 gradient-text"> Учень отримує:</h3>
+      <ul class="list-disc list-inside text-gray-300 text-lg space-y-2">
+        <li>Реальне розуміння предмету</li>
+        <li>Вміння писати код для вирішення задач</li>
+        <li>Готові проєкти в портфоліо</li>
+        <li>Упевненість у власних силах</li>
+      </ul>
+    </div>
+    
+  </section>
+
+  <!-- Команда -->
+  <section class="py-16 bg-gray-900">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-extrabold mb-12 gradient-text">Наша команда</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div class="hover-card p-6 rounded-lg border-2 border-blue-900 text-center">
+          <img src="https://randomuser.me/api/portraits/men/1.jpg" alt="Олег Іванов" class="w-28 h-28 rounded-full mx-auto mb-4 border-2 border-blue-500">
+          <h3 class="text-xl font-semibold text-gray-100">Олег Іванов</h3>
+          <p class="text-gray-400">Математик, досвід понад 10 років</p>
+        </div>
+        <div class="hover-card p-6 rounded-lg border-2 border-blue-900 text-center">
+          <img src="https://randomuser.me/api/portraits/women/2.jpg" alt="Марія Петрова" class="w-28 h-28 rounded-full mx-auto mb-4 border-2 border-blue-500">
+          <h3 class="text-xl font-semibold text-gray-100">Марія Петрова</h3>
+          <p class="text-gray-400">Python-розробниця та викладачка</p>
+        </div>
+        <div class="hover-card p-6 rounded-lg border-2 border-blue-900 text-center">
+          <img src="https://randomuser.me/api/portraits/men/3.jpg" alt="Ігор Сидоров" class="w-28 h-28 rounded-full mx-auto mb-4 border-2 border-blue-500">
+          <h3 class="text-xl font-semibold text-gray-100">Ігор Сидоров</h3>
+          <p class="text-gray-400">Scratch та інтерактивні курси для дітей</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Цінності -->
+  <section class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl font-extrabold mb-12 gradient-text">Місія та цінності</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div class="hover-card p-6 rounded-lg border-2 border-blue-900">
+          <span class="text-4xl text-blue-500">🎓</span>
+          <p class="font-medium mt-4 text-gray-100">Якісна освіта</p>
+        </div>
+        <div class="hover-card p-6 rounded-lg border-2 border-blue-900">
+          <span class="text-4xl text-green-500">🤝</span>
+          <p class="font-medium mt-4 text-gray-100">Підхід до кожного</p>
+        </div>
+        <div class="hover-card p-6 rounded-lg border-2 border-blue-900">
+          <span class="text-4xl text-yellow-500">💡</span>
+          <p class="font-medium mt-4 text-gray-100">Сучасні методи</p>
+        </div>
+        <div class="hover-card p-6 rounded-lg border-2 border-blue-900">
+          <span class="text-4xl text-purple-500">👥</span>
+          <p class="font-medium mt-4 text-gray-100">Підтримка 24/7</p>
+        </div>
+      </div>
+      <div class="mt-12">
+        <a href="course.html" class="btn-cta text-white">Переглянути курси</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gradient-to-r from-blue-700 to-purple-600 text-white py-8">
+    <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <h3>Контакти</h3>
+        <p class="text-white">📞 +380 123 456 789</p>
+        <p class="text-white">📧 info@skillbridge.ua</p>
+        <p class="text-white">Telegram: @SkillBridge</p>
+        <p class="text-white">Instagram: @SkillBridgeUA</p>
+      </div>
+      
+      <div>
+        <h3 >Інформація</h3>
+        <a href="privac.html" class="block text-white hover:text-blue-300 transition duration-200">Політика конфіденційності</a>
+      </div>
+    </div>
+    <p class="text-center mt-8 text-white">© 2025 SkillBridge. Усі права захищено.</p>
+  </footer>
+
+  <script>
+    const hamburger = document.getElementById('hamburger-btn');
+    const menu = document.getElementById('mobile-menu');
+
+    hamburger.addEventListener('click', () => {
+      menu.classList.toggle('open');
+      hamburger.classList.toggle('open');
+    });
+
+    menu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        menu.classList.remove('open');
+        hamburger.classList.remove('open');
+      });
+    });
+  </script>
+</body>
+</html>
