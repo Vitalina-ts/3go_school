@@ -92,10 +92,16 @@ const Application = mongoose.model('Application', applicationSchema);
 // Middleware to verify JWT
 const authenticateToken = (req, res, next) => {
     const token = req.headers['authorization']?.split(' ')[1];
-    if (!token) return res.status(401).json({ message: 'Токен не надано' });
+    if (!token) {
+        console.error('No token provided in request headers');
+        return res.status(401).json({ message: 'Токен не надано' });
+    }
 
     jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key', (err, user) => {
-        if (err) return res.status(403).json({ message: 'Недійсний токен' });
+        if (err) {
+            console.error('Invalid token:', err.message);
+            return res.status(403).json({ message: 'Недійсний токен' });
+        }
         req.user = user;
         next();
     });
@@ -195,10 +201,13 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/profile', authenticateToken, async (req, res) => {
     try {
         const user = await User.findOne({ email: req.user.email }, 'name email registered language courses schedule');
-        if (!user) return res.status(404).json({ message: 'Користувача не знайдено' });
+        if (!user) {
+            console.error('User not found for email:', req.user.email);
+            return res.status(404).json({ message: 'Користувача не знайдено' });
+        }
 
         // Fetch reviews authored by the user
-        const reviews = await Review.find({ author: user.name }, 'text');
+        const reviews = await Review.find({ author: user.name }, 'text').sort({ _id: -1 });
 
         res.json({
             name: user.name,
@@ -210,7 +219,7 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
             reviews: reviews.map(review => review.text)
         });
     } catch (error) {
-        console.error('Error fetching profile:', error);
+        console.error('Error fetching profile for email:', req.user.email, error);
         res.status(500).json({ message: 'Помилка сервера' });
     }
 });
