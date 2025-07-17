@@ -3,261 +3,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Профіль користувача - SkillBridge</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Ваш профіль - SkillBridge</title>
     <style>
-        .menu-slide {
-            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
-            max-height: 0;
-            opacity: 0;
-            overflow: hidden;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         }
-        .menu-slide.open {
-            max-height: 500px;
-            opacity: 1;
+
+        body {
+            background-color: #f8f9fa;
+            color: #212529;
+            line-height: 1.6;
         }
-        .hamburger div {
-            transition: all 0.3s ease;
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        .hamburger.open .bar1 {
-            transform: rotate(45deg) translate(5px, 5px);
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
-        .hamburger.open .bar2 {
-            opacity: 0;
+
+        header h1 {
+            display: inline-block;
+            font-size: 1.8rem;
+            font-weight: 600;
         }
-        .hamburger.open .bar3 {
-            transform: rotate(-45deg) translate(7px, -7px);
+
+        nav {
+            float: right;
+            margin-top: 0.5rem;
         }
-        section {
-            padding-top: 96px;
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-size: 1rem;
+            transition: color 0.2s;
         }
-        .profile-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            background: linear-gradient(145deg, #1f2937, #374151);
+
+        nav a:hover {
+            color: #e0e0e0;
         }
-        .profile-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+
+        main {
+            padding: 2rem 0;
+            min-height: calc(100vh - 200px);
         }
-        .btn-cta {
-            transition: transform 0.3s ease;
+
+        .profile {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
-        .btn-cta:hover {
-            transform: scale(1.05);
-            background: linear-gradient(to right, #2563eb, #a855f7);
+
+        .profile h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #007bff;
+            text-align: center;
         }
-        .gradient-text {
-            background: linear-gradient(to right, #2563eb, #a855f7);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+
+        .profile-info h3 {
+            font-size: 1.4rem;
+            margin: 1.5rem 0 0.8rem;
+            color: #343a40;
         }
-        .calendar-event, .message-card {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            background: linear-gradient(145deg, #1f2937, #374151);
+
+        .profile-info p {
+            margin-bottom: 0.8rem;
+            font-size: 1rem;
+            color: #495057;
         }
-        .calendar-event:hover, .message-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+
+        .profile-info p span {
+            font-weight: 500;
+        }
+
+        .profile-info ul {
+            list-style: none;
+            margin-top: 0.5rem;
+        }
+
+        .profile-info ul li {
+            margin-bottom: 1.2rem;
+            padding: 0.8rem;
+            background: #f1f3f5;
+            border-radius: 5px;
+            transition: background 0.2s;
+        }
+
+        .profile-info ul li:hover {
+            background: #e9ecef;
+        }
+
+        .profile-info ul li a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .profile-info ul li a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            background-color: #343a40;
+            color: white;
+            padding: 2rem 0;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-section h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-section p, .footer-section a {
+            color: #adb5bd;
+            text-decoration: none;
+            margin-bottom: 0.4rem;
+            display: block;
+            font-size: 0.9rem;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        footer > p {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: #adb5bd;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            nav {
+                float: none;
+                text-align: center;
+                margin-top: 1rem;
+            }
+
+            nav a {
+                margin: 0 0.8rem;
+                font-size: 0.9rem;
+            }
+
+            .profile {
+                padding: 1.5rem;
+            }
+
+            .profile h2 {
+                font-size: 1.5rem;
+            }
+
+            .profile-info h3 {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100">
-    <!-- Navigation -->
-    <nav class="fixed top-0 left-0 w-full bg-gradient-to-r from-blue-700 to-purple-600 text-white py-4 z-50 shadow-2xl">
-        <div class="container mx-auto px-4">
-            <div class="flex justify-between items-center">
-                <a href="/" class="text-3xl font-extrabold tracking-tight">SkillBridge 🌟</a>
-                <button id="hamburger-btn" class="md:hidden flex flex-col space-y-1 hamburger">
-                    <div class="bar1 w-8 h-1 bg-white rounded"></div>
-                    <div class="bar2 w-8 h-1 bg-white rounded"></div>
-                    <div class="bar3 w-8 h-1 bg-white rounded"></div>
-                </button>
-            </div>
-            <div id="mobile-menu" class="menu-slide md:hidden">
-                <ul class="flex flex-col space-y-2 mt-4">
-                    
-            </div>
+<body>
+    <header>
+        <div class="container">
+            <h1>SkillBridge 🌟</h1>
+            <nav>
+                <a href="index.html">Головна</a>
+                <a href="courses.html">Курси</a>
+                <a href="blog.html">Блог</a>
+                <a href="account.html">Профіль</a>
+                <a href="login.html">Вихід</a>
+            </nav>
         </div>
-    </nav>
+    </header>
 
-    <!-- Profile Section -->
-    <section class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-100 gradient-text">Ваш профіль</h2>
-            <div class="max-w-3xl mx-auto profile-card border-2 border-blue-900 rounded-xl p-8 shadow-lg">
-                <!-- Greeting -->
-                <div class="mb-8 text-center">
-                    <h3 id="greeting" class="text-3xl font-semibold text-gray-100 mb-2 gradient-text">Привіт, Користувач!</h3>
-                    <p class="text-gray-400">Ідемо до нових звершень!</p>
-                </div>
+    <main>
+        <section class="profile">
+            <h2>Ваш профіль</h2>
+            <div class="profile-info">
+                <h3>Привіт, <span id="user-name">Користувач</span>!</h3>
+                <p>Ідемо до нових звершень!</p>
 
-                <!-- Personal Details -->
-                <div class="mb-8">
-                    <h4 class="text-2xl font-semibold text-gray-100 mb-4">Особиста інформація</h4>
-                    <div class="space-y-2 text-gray-300">
-                        <p><strong>Ім’я:</strong> <span id="user-fullname"></span></p>
-                        <p><strong>Електронна пошта:</strong> <span id="user-email-details"></span></p>
-                        <p><strong>Дата реєстрації:</strong> <span id="user-registered"></span></p>
-                        <p><strong>Мова навчання:</strong> <span id="user-language"></span></p>
-                    </div>
-                </div>
+                <h3>Особиста інформація</h3>
+                <p>Ім’я: <span id="user-name-display"></span></p>
+                <p>Електронна пошта: <span id="user-email"></span></p>
 
-                <!-- My Courses -->
-                <div class="mb-8">
-                    <h4 class="text-2xl font-semibold text-gray-100 mb-4">Мої курси</h4>
-                    <div id="courses-list" class="space-y-6"></div>
-                </div>
-
-                <!-- Messages -->
-                <div class="mb-8">
-                    <h4 class="text-2xl font-semibold text-gray-100 mb-4">Повідомлення</h4>
-                    <div id="messages-list" class="space-y-4"></div>
-                </div>
-
-                <!-- Calendar -->
-                <div>
-                    <h4 class="text-2xl font-semibold text-gray-100 mb-4">Календар уроків</h4>
-                    <div id="calendar-list" class="grid grid-cols-1 gap-4"></div>
-                </div>
+                <h3>Мої курси</h3>
+                <ul id="user-courses"></ul>
             </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
-    <!-- Footer -->
-    <footer class="bg-gradient-to-r from-blue-700 to-purple-600 text-white py-8">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <h3 class="text-xl font-semibold mb-4">Контакти</h3>
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Контакти</h4>
                     <p>Телефон: +380 123 456 789</p>
                     <p>Email: info@skillbridge.ua</p>
                     <p>Telegram: @SkillBridge</p>
                     <p>Instagram: @SkillBridgeUA</p>
                 </div>
-                <div>
-                    <h3 class="text-xl font-semibold mb-4">Інформація</h3>
-                    <a href="privacy.html" class="block hover:text-blue-300 transition duration-200">Політика конфіденційності</a>
+                <div class="footer-section">
+                    <h4>Інформація</h4>
+                    <a href="privacy.html">Політика конфіденційності</a>
                 </div>
             </div>
-            <p class="text-center mt-8 text-gray-300">© 2025 SkillBridge. Усі права захищено.</p>
+            <p>© 2025 SkillBridge. Усі права захищено.</p>
         </div>
     </footer>
 
     <script>
-        // Hamburger menu toggle
-        const hamburgerBtn = document.getElementById('hamburger-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        hamburgerBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('open');
-            hamburgerBtn.classList.toggle('open');
-        });
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Будь ласка, увійдіть у систему');
+                window.location.href = '/login.html';
+                return;
+            }
 
-        // Function to fetch profile data
-        async function fetchProfileData() {
-            try {
-                const token = localStorage.getItem('token');
-                if (!token) {
-                    console.error('No token found in localStorage');
-                    alert('Будь ласка, увійдіть у систему');
-                    window.location.href = '/login.html';
-                    return null;
+            fetch('/api/profile', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
-
-                const response = await fetch('/api/profile', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-
+            })
+            .then(response => {
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    console.error('Profile fetch error:', response.status, errorData.message);
-                    throw new Error(errorData.message || 'Помилка при отриманні даних профілю');
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                    window.location.href = '/login.html';
+                    return;
                 }
 
-                return await response.json();
-            } catch (error) {
-                console.error('Error fetching profile:', error);
-                alert(error.message || 'Помилка сервера. Спробуйте пізніше.');
-                return null;
-            }
-        }
+                // Відображення даних
+                document.querySelector('#user-name').textContent = data.name || 'Користувач';
+                document.querySelector('#user-name-display').textContent = data.name || 'Користувач';
+                document.querySelector('#user-email').textContent = data.email || 'Немає даних';
 
-        // Function to populate profile data
-        async function populateProfile() {
-            try {
-                const profileData = await fetchProfileData();
-                if (!profileData) return;
-
-                // Populate greeting
-                document.getElementById('greeting').textContent = `Привіт, ${profileData.name}!`;
-                document.getElementById('user-fullname').textContent = profileData.name;
-                document.getElementById('user-email-details').textContent = profileData.email;
-                document.getElementById('user-registered').textContent = new Date(profileData.registered).toLocaleDateString('uk-UA');
-                document.getElementById('user-language').textContent = profileData.language;
-
-                // Populate courses from users.courses
-                const coursesList = document.getElementById('courses-list');
-                coursesList.innerHTML = '';
-                if (profileData.courses && profileData.courses.length > 0) {
-                    profileData.courses.forEach(course => {
-                        const courseItem = document.createElement('div');
-                        courseItem.className = 'calendar-event border-2 border-blue-900 rounded-lg p-4';
-                        courseItem.innerHTML = `
-                            <p class="text-gray-100 font-semibold">${course.name}</p>
-                            ${course.meetLink ? `<p class="text-gray-400 text-sm">Посилання на зустріч: <a href="${course.meetLink}" target="_blank" class="text-blue-400 hover:underline">Перейти</a></p>` : ''}
-                            ${course.materialsLink ? `<p class="text-gray-400 text-sm">Матеріали: <a href="${course.materialsLink}" target="_blank" class="text-blue-400 hover:underline">Перейти</a></p>` : ''}
+                const coursesList = document.querySelector('#user-courses');
+                coursesList.innerHTML = ''; // Очищення списку
+                if (data.courses && data.courses.length > 0) {
+                    data.courses.forEach(course => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `
+                            <strong>${course.name || 'Без назви'}</strong><br>
+                            Посилання на зустріч: <a href="${course.meetLink || '#'}" target="_blank">${course.meetLink || 'Немає посилання'}</a><br>
+                            Матеріали: <a href="${course.materialsLink || '#'}" target="_blank">${course.materialsLink || 'Немає матеріалів'}</a>
                         `;
-                        coursesList.appendChild(courseItem);
+                        coursesList.appendChild(li);
                     });
                 } else {
-                    coursesList.innerHTML = '<p class="text-gray-400">Ви ще не записані на жоден курс.</p>';
+                    coursesList.innerHTML = '<li>Ви ще не записані на жоден курс.</li>';
                 }
-
-                // Populate messages from reviews
-                const messagesList = document.getElementById('messages-list');
-                messagesList.innerHTML = '';
-                if (profileData.reviews && profileData.reviews.length > 0) {
-                    profileData.reviews.forEach(review => {
-                        const messageItem = document.createElement('div');
-                        messageItem.className = 'message-card border-2 border-blue-900 rounded-lg p-4';
-                        messageItem.innerHTML = `
-                            <p class="text-gray-100">${review}</p>
-                            <p class="text-gray-400 text-sm">Автор: ${profileData.name}</p>
-                        `;
-                        messagesList.appendChild(messageItem);
-                    });
-                } else {
-                    messagesList.innerHTML = '<p class="text-gray-400">Немає повідомлень.</p>';
-                }
-
-                // Populate calendar
-                const calendarList = document.getElementById('calendar-list');
-                calendarList.innerHTML = '';
-                if (profileData.schedule && profileData.schedule.length > 0) {
-                    profileData.schedule.forEach(event => {
-                        const eventItem = document.createElement('div');
-                        eventItem.className = 'calendar-event border-2 border-blue-900 rounded-lg p-4';
-                        eventItem.innerHTML = `
-                            <p class="text-gray-100 font-semibold">${event.title}</p>
-                            <p class="text-gray-400 text-sm">Курс: ${event.courseName}</p>
-                            <p class="text-gray-400 text-sm">Дата: ${new Date(event.date).toLocaleString('uk-UA')}</p>
-                            ${event.meetLink ? `<p class="text-gray-400 text-sm">Посилання на зустріч: <a href="${event.meetLink}" target="_blank" class="text-blue-400 hover:underline">Перейти</a></p>` : ''}
-                        `;
-                        calendarList.appendChild(eventItem);
-                    });
-                } else {
-                    calendarList.innerHTML = '<p class="text-gray-400">Немає запланованих уроків.</p>';
-                }
-            } catch (error) {
-                console.error('Error populating profile:', error);
-            }
-        }
-
-        // Fetch and populate data on page load
-        document.addEventListener('DOMContentLoaded', populateProfile);
+            })
+            .catch(error => {
+                console.error('Помилка запиту:', error);
+                alert('Не вдалося підключитися до системи. Спробуйте ще раз.');
+                window.location.href = '/login.html';
+            });
+        });
     </script>
 </body>
 </html>
