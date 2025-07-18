@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Реєстрація викладача | SkillBridge</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Roboto', sans-serif; }
+    .hero-bg {
+      background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+      background-size: cover; background-position: center; min-height: 70vh; display: flex; align-items: center;
+    }
+    .menu-slide { transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out; max-height: 0; opacity: 0; overflow: hidden; }
+    .menu-slide.open { max-height: 500px; opacity: 1; }
+    .hamburger div { transition: all 0.3s ease; }
+    .hamburger.open .bar1 { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.open .bar2 { opacity: 0; }
+    .hamburger.open .bar3 { transform: rotate(-45deg) translate(7px, -7px); }
+    section { padding-top: 96px; }
+    .btn-cta { background: linear-gradient(to right, #2563eb, #a855f7); padding: 0.75rem 1.5rem; border-radius: 9999px; transition: transform 0.3s ease, background 0.3s ease; }
+    .btn-cta:hover { transform: scale(1.05); background: linear-gradient(to right, #1e40af, #7e22ce); }
+    .gradient-text { background: linear-gradient(to right, #2563eb, #a855f7); background-clip: text; -webkit-background-clip: text; color: transparent; display: inline-block; }
+    @supports (-webkit-background-clip: text) { .gradient-text { -webkit-background-clip: text; -webkit-text-fill-color: transparent; } }
+    @supports not (-webkit-background-clip: text) { .gradient-text { color: #2563eb; } }
+  </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+  <nav class="fixed top-0 w-full bg-gradient-to-r from-blue-700 to-purple-600 text-white py-4 z-50 shadow-2xl">
+    <div class="container mx-auto px-4 flex justify-between items-center">
+      <a href="/" class="text-2xl font-bold">SkillBridge 🌟</a>
+      <div class="hidden md:flex space-x-6">
+        <a href="login_teachers.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
+      </div>
+      <button id="hamburger-btn" class="md:hidden flex flex-col space-y-1 hamburger">
+        <div class="bar1 w-6 h-1 bg-white rounded"></div>
+        <div class="bar2 w-6 h-1 bg-white rounded"></div>
+        <div class="bar3 w-6 h-1 bg-white rounded"></div>
+      </button>
+    </div>
+    <div id="mobile-menu" class="md:hidden menu-slide mt-4 px-4 bg-gray-800 rounded-lg">
+      <a href="login_teachers.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
+    </div>
+  </nav>
+
+  <section class="hero-bg text-white text-center">
+    <div class="container mx-auto px-4 py-16">
+      <h1 class="text-5xl font-extrabold mb-6 gradient-text">Реєстрація викладача</h1>
+      <p class="text-xl max-w-3xl mx-auto text-gray-300 leading-relaxed">Створіть обліковий запис викладача, щоб почати викладати курси та управляти заняттями!</p>
+    </div>
+  </section>
+
+  <section id="register" class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+    <div class="container mx-auto px-4">
+      <div class="max-w-md mx-auto bg-gray-800 rounded-xl p-6 shadow-lg border-2 border-blue-900">
+        <h2 class="text-3xl font-extrabold mb-6 text-center gradient-text">Створити обліковий запис викладача</h2>
+        <div class="space-y-4">
+          <input type="text" placeholder="ПІБ" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400" id="register-name">
+          <input type="email" placeholder="Електронна пошта" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400" id="register-email">
+          <input type="password" placeholder="Пароль" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400" id="register-password">
+          <input type="password" placeholder="Підтвердження пароля" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-gray-100 placeholder-gray-400" id="register-confirm-password">
+          <button class="w-full btn-cta text-white" id="register-submit">Зареєструватися</button>
+        </div>
+        <p class="text-center mt-4 text-gray-400">Вже маєте обліковий запис? <a href="login_teachers.html" class="text-blue-300 hover:text-blue-500 transition duration-200">Увійти</a></p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-gradient-to-r from-blue-700 to-purple-600 text-white py-8">
+    <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <h3>Контакти</h3>
+        <p class="text-white">📞 +380 123 456 789</p>
+        <p class="text-white">📧 info@skillbridge.ua</p>
+        <p class="text-white">Telegram: @SkillBridge</p>
+        <p class="text-white">Instagram: @SkillBridgeUA</p>
+      </div>
+      <div>
+        <h3>Інформація</h3>
+        <a href="privac.html" class="block text-white hover:text-blue-300 transition duration-200">Політика конфіденційності</a>
+      </div>
+    </div>
+    <p class="text-center mt-8 text-white">© 2025 SkillBridge. Усі права захищено.</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const handleRegisterSubmit = async () => {
+        const name = document.getElementById('register-name').value.trim();
+        const email = document.getElementById('register-email').value.trim();
+        const password = document.getElementById('register-password').value.trim();
+        const confirmPassword = document.getElementById('register-confirm-password').value.trim();
+
+        if (!name || !email || !password || !confirmPassword) {
+          alert('Будь ласка, заповніть усі поля');
+          return;
+        }
+
+        if (password !== confirmPassword) {
+          alert('Паролі не збігаються');
+          return;
+        }
+
+        try {
+          const response = await fetch('http://localhost:3000/api/teacher-register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, password }),
+            credentials: 'include'
+          });
+
+          const result = await response.json();
+          if (response.ok) {
+            alert(result.message || 'Реєстрація викладача успішна! Будь ласка, увійдіть.');
+            document.getElementById('register-name').value = '';
+            document.getElementById('register-email').value = '';
+            document.getElementById('register-password').value = '';
+            document.getElementById('register-confirm-password').value = '';
+            window.location.href = 'teacher-login.html';
+          } else {
+            alert(result.message || 'Помилка при реєстрації');
+          }
+        } catch (err) {
+          console.error('Fetch error:', err);
+          alert('Сталася помилка. Спробуйте пізніше. Перевірте консоль для деталей.');
+        }
+      };
+
+      document.getElementById('register-submit').addEventListener('click', (e) => {
+        e.preventDefault();
+        handleRegisterSubmit();
+      });
+
+      const hamburger = document.getElementById('hamburger-btn');
+      const menu = document.getElementById('mobile-menu');
+
+      hamburger.addEventListener('click', () => {
+        menu.classList.toggle('open');
+        hamburger.classList.toggle('open');
+      });
+
+      menu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          menu.classList.remove('open');
+          hamburger.classList.remove('open');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

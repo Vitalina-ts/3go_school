@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Блог - SkillBridge</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .menu-slide {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .menu-slide.open {
+            max-height: 500px;
+            opacity: 1;
+        }
+        .hamburger div {
+            transition: all 0.3s ease;
+        }
+        .hamburger.open .bar1 {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.open .bar2 {
+            opacity: 0;
+        }
+        .hamburger.open .bar3 {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+        section {
+            padding-top: 96px;
+        }
+        .modal {
+            transition: opacity 0.3s ease-in-out;
+            display: none;
+            opacity: 0;
+        }
+        .modal.open {
+            display: flex;
+            opacity: 1;
+        }
+        .blog-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: linear-gradient(145deg, #1f2937, #374151);
+            cursor: pointer;
+        }
+        .blog-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        .btn-cta {
+            transition: transform 0.3s ease;
+        }
+        .btn-cta:hover {
+            transform: scale(1.05);
+            background: linear-gradient(to right, #2563eb, #a855f7);
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #2563eb, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .error-message {
+            color: #f87171;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Style for modal content paragraphs */
+        .modal-content {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <nav class="fixed top-0 left-0 w-full bg-gradient-to-r from-blue-700 to-purple-600 text-white py-4 z-50 shadow-2xl">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <a href="/" class="text-3xl font-extrabold tracking-tight">SkillBridge 🌟</a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="blog_admin.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Зміни блогу</a>
+                    <a href="login_teachers.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
+                </div>
+                <button id="hamburger-btn" class="md:hidden flex flex-col space-y-1 hamburger">
+                    <div class="bar1 w-8 h-1 bg-white rounded"></div>
+                    <div class="bar2 w-8 h-1 bg-white rounded"></div>
+                    <div class="bar3 w-8 h-1 bg-white rounded"></div>
+                </button>
+            </div>
+            <div id="mobile-menu" class="md:hidden menu-slide mt-4 bg-gray-800 text-gray-100 rounded-xl p-4 shadow-lg">
+                <a href="blog_admin.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Зміни блогу</a>
+                <a href="account_teachers.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+        <div class="container mx-auto px-4">
+            <h1 class="text-5xl font-extrabold text-center mb-6 gradient-text">Блог SkillBridge</h1>
+            <p class="text-xl text-center mb-10 text-gray-300">Статті, поради та новини про математику, програмування, підготовку до ЗНО та корисні лайфхаки. Дізнайтесь, як зробити навчання цікавим та ефективним!</p>
+        </div>
+    </section>
+
+    <section class="py-16 bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-12">
+                <h2 class="text-4xl font-extrabold gradient-text">Статті, поради, новини</h2>
+                <button id="add-post-btn" class="bg-gradient-to-r from-blue-600 to-purple-500 text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta hidden">Додати статтю</button>
+            </div>
+            <div id="blog-posts" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div id="posts-loader" class="loader"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add Post Modal -->
+    <div id="add-post-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg max-w-lg w-full">
+            <button id="close-modal-btn" class="text-2xl text-gray-300 hover:text-gray-100 float-right">✕</button>
+            <h2 class="text-2xl font-semibold text-gray-100 mb-4">Додати нову статтю</h2>
+            <div>
+                <input type="text" id="post-title" placeholder="Заголовок (максимум 100 символів)" maxlength="100" class="w-full p-3 mb-4 bg-gray-700 text-gray-100 rounded-lg">
+                <p id="title-error" class="error-message">Заголовок має бути від 5 до 100 символів</p>
+                <input type="textഗ
+System: text" id="post-description" placeholder="Короткий опис (максимум 200 символів)" maxlength="200" class="w-full p-3 mb-4 bg-gray-700 text-gray-100 rounded-lg">
+                <p id="description-error" class="error-message">Опис має бути від 10 до 200 символів</p>
+                <textarea id="post-content" placeholder="Текст статті (максимум 5000 символів)" maxlength="5000" class="w-full p-3 mb-4 bg-gray-700 text-gray-100 rounded-lg h-32"></textarea>
+                <p id="content-error" class="error-message">Текст статті має бути від 50 до 5000 символів</p>
+                <p id="general-error" class="error-message"></p>
+                <button id="submit-post-btn" class="bg-gradient-to-r from-blue-600 to-purple-500 text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta w-full flex items-center justify-center">
+                    <span>Опублікувати</span>
+                    <div id="submit-loader" class="loader ml-2"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Post Modal -->
+    <div id="view-post-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg max-w-2xl w-full modal-content">
+            <button id="close-view-modal-btn" class="text-2xl text-gray-300 hover:text-gray-100 float-right">✕</button>
+            <h2 id="view-post-title" class="text-2xl font-semibold text-gray-100 mb-4"></h2>
+            <p id="view-post-description" class="text-gray-400 mb-4"></p>
+            <p id="view-post-date" class="text-sm text-gray-500 mb-4"></p>
+            <div id="view-post-content" class="text-gray-300 leading-relaxed"></div>
+            <button id="delete-post-btn" class="bg-red-600 text-white px-4 py-2 rounded-lg mt-4 hidden">Видалити</button>
+        </div>
+    </div>
+
+    <footer class="bg-gradient-to-r from-blue-700 to-purple-600 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Контакти</h3>
+                    <p>📞 +380 123 456 789</p>
+                    <p>📧 info@skillbridge.ua</p>
+                    <p>Telegram: @SkillBridge</p>
+                    <p>Instagram: @SkillBridgeUA</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Інформація</h3>
+                    <a href="privac.html" class="block hover:text-blue-300 transition duration-200">Політика конфіденційності</a>
+                </div>
+            </div>
+            <p class="text-center mt-8 text-gray-300">© 2025 SkillBridge. Усі права захищено.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Hamburger menu toggle
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburgerBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+            hamburgerBtn.classList.toggle('open');
+        });
+
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+                hamburgerBtn.classList.remove('open');
+            });
+        });
+
+        // Modal toggle for adding post
+        const addPostBtn = document.getElementById('add-post-btn');
+        const addPostModal = document.getElementById('add-post-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+
+        addPostBtn.addEventListener('click', () => {
+            addPostModal.classList.add('open');
+            clearErrors();
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            addPostModal.classList.remove('open');
+            clearErrors();
+        });
+
+        // Modal toggle for viewing post
+        const viewPostModal = document.getElementById('view-post-modal');
+        const closeViewModalBtn = document.getElementById('close-view-modal-btn');
+
+        closeViewModalBtn.addEventListener('click', () => {
+            viewPostModal.classList.remove('open');
+        });
+
+        // Check if user is authenticated
+        function checkAuth() {
+            const token = localStorage.getItem('token');
+            addPostBtn.classList.toggle('hidden', !token);
+        }
+
+        // Clear error messages
+        function clearErrors() {
+            document.getElementById('title-error').style.display = 'none';
+            document.getElementById('description-error').style.display = 'none';
+            document.getElementById('content-error').style.display = 'none';
+            document.getElementById('general-error').style.display = 'none';
+        }
+
+        // Validate input fields
+        function validateInputs(title, description, content) {
+            let isValid = true;
+            clearErrors();
+
+            if (title.length < 5 || title.length > 100) {
+                document.getElementById('title-error').style.display = 'block';
+                isValid = false;
+            }
+            if (description.length < 10 || description.length > 200) {
+                document.getElementById('description-error').style.display = 'block';
+                isValid = false;
+            }
+            if (content.length < 50 || content.length > 5000) {
+                document.getElementById('content-error').style.display = 'block';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // Fetch blog posts
+        async function fetchBlogPosts() {
+            const postsLoader = document.getElementById('posts-loader');
+            const blogPosts = document.getElementById('blog-posts');
+            postsLoader.style.display = 'block';
+            try {
+                console.log('Завантаження статей з /api/blog...');
+                const response = await fetch('/api/blog');
+                if (!response.ok) {
+                    throw new Error(`Помилка HTTP: ${response.status} ${response.statusText}`);
+                }
+                const posts = await response.json();
+                console.log('Отримано статті:', posts);
+
+                blogPosts.innerHTML = '';
+                if (!posts || posts.length === 0) {
+                    blogPosts.innerHTML = '<p class="text-gray-400 text-center">Статті відсутні.</p>';
+                    return;
+                }
+
+                posts.forEach(post => {
+                    if (!post._id) {
+                        console.error('Помилка: стаття без _id:', post);
+                        return;
+                    }
+                    const postDiv = document.createElement('div');
+                    postDiv.className = 'blog-card border-2 border-blue-900 rounded-xl p-6 shadow-lg';
+                    postDiv.innerHTML = `
+                        <h3 class="text-xl font-semibold text-gray-100 mb-2">${escapeHTML(post.title)}</h3>
+                        <p class="text-gray-400 mb-4">${escapeHTML(post.description)}</p>
+                        <p class="text-sm text-gray-500">Опубліковано: ${new Date(post.publishedAt).toLocaleDateString('uk-UA')}</p>
+                        ${localStorage.getItem('token') ? `<button class="delete-post-btn bg-red-600 text-white px-4 py-2 rounded-lg mt-2" data-id="${post._id}">Видалити</button>` : ''}
+                    `;
+                    postDiv.addEventListener('click', (e) => {
+                        if (!e.target.classList.contains('delete-post-btn')) {
+                            console.log('Відкриття статті:', post._id);
+                            document.getElementById('view-post-title').textContent = post.title;
+                            document.getElementById('view-post-description').textContent = post.description;
+                            document.getElementById('view-post-date').textContent = `Опубліковано: ${new Date(post.publishedAt).toLocaleDateString('uk-UA')}`;
+                            // Split content into paragraphs and escape HTML
+                            const paragraphs = post.content.split('\n').filter(p => p.trim() !== '').map(p => `<p>${escapeHTML(p)}</p>`).join('');
+                            document.getElementById('view-post-content').innerHTML = paragraphs;
+                            const deleteBtn = document.getElementById('delete-post-btn');
+                            if (localStorage.getItem('token')) {
+                                deleteBtn.classList.remove('hidden');
+                                deleteBtn.setAttribute('data-id', post._id);
+                            } else {
+                                deleteBtn.classList.add('hidden');
+                            }
+                            viewPostModal.classList.add('open');
+                        }
+                    });
+                    blogPosts.appendChild(postDiv);
+                });
+
+                // Add delete event listeners
+                document.querySelectorAll('.delete-post-btn').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const postId = e.target.getAttribute('data-id');
+                        console.log('Спроба видалити статтю з ID:', postId);
+                        if (confirm('Ви впевнені, що хочете видалити цю статтю?')) {
+                            await deletePost(postId);
+                        }
+                    });
+                });
+
+                // Delete button in view modal
+                document.getElementById('delete-post-btn').addEventListener('click', async (e) => {
+                    const postId = e.target.getAttribute('data-id');
+                    console.log('Спроба видалити статтю з ID:', postId);
+                    if (confirm('Ви впевнені, що хочете видалити цю статтю?')) {
+                        await deletePost(postId);
+                        viewPostModal.classList.remove('open');
+                    }
+                });
+            } catch (error) {
+                console.error('Помилка при отриманні статей:', error.message);
+                blogPosts.innerHTML = `<p class="text-red-400 text-center">Сталася помилка: ${escapeHTML(error.message)}. Спробуйте ще раз.</p>`;
+            } finally {
+                postsLoader.style.display = 'none';
+            }
+        }
+
+        // Delete blog post
+        async function deletePost(postId) {
+            try {
+                const response = await fetch(`/api/blog/${postId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                });
+
+                if (response.ok) {
+                    console.log('Статтю з ID:', postId, 'успішно видалено');
+                    alert('Статтю успішно видалено');
+                    fetchBlogPosts(); // Refresh posts
+                } else {
+                    const result = await response.json();
+                    throw new Error(result.message || 'Помилка при видаленні статті');
+                }
+            } catch (error) {
+                console.error('Помилка при видаленні статті:', error.message);
+                alert(`Сталася помилка: ${error.message}`);
+            }
+        }
+
+        // Submit new blog post
+        document.getElementById('submit-post-btn').addEventListener('click', async () => {
+            const title = document.getElementById('post-title').value.trim();
+            const description = document.getElementById('post-description').value.trim();
+            const content = document.getElementById('post-content').value.trim();
+            const submitBtn = document.getElementById('submit-post-btn');
+            const submitLoader = document.getElementById('submit-loader');
+
+            if (!validateInputs(title, description, content)) {
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitLoader.style.display = 'block';
+            try {
+                console.log('Відправка нової статті:', { title, description });
+                const response = await fetch('/api/blog', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    },
+                    body: JSON.stringify({ title, description, content })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    console.log('Статтю успішно опубліковано:', result.post._id);
+                    alert(result.message || 'Статтю успішно опубліковано');
+                    document.getElementById('post-title').value = '';
+                    document.getElementById('post-description').value = '';
+                    document.getElementById('post-content').value = '';
+                    addPostModal.classList.remove('open');
+                    fetchBlogPosts();
+                } else {
+                    throw new Error(result.message || 'Помилка при публікації статті');
+                }
+            } catch (error) {
+                console.error('Помилка при публікації статті:', error.message);
+                document.getElementById('general-error').textContent = `Сталася помилка: ${error.message}`;
+                document.getElementById('general-error').style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitLoader.style.display = 'none';
+            }
+        });
+
+        // Load blog posts and check auth on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Сторінка blog.html завантажена');
+            checkAuth();
+            fetchBlogPosts();
+        });
+    </script>
+</body>
+</html>
