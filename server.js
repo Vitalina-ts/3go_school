@@ -3,22 +3,27 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
+const sanitizeHtml = require('sanitize-html');
 require('dotenv').config();
 
 const app = express();
 
 // Middleware
-app.use(cors()); // Enable CORS for cross-origin requests
+app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
-app.use(express.static('public')); // Serve static files (e.g., HTML, CSS, JS)
+app.use(express.static('public'));
 
 // MongoDB connection
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/skillbridge';
 mongoose.connect(MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
-}).then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+}).then(() => {
+    console.log('Connected to MongoDB');
+}).catch(err => {
+    console.error('MongoDB connection error:', err.message, err.stack);
+    process.exit(1);
+});
 
 // User Schema
 const userSchema = new mongoose.Schema({
@@ -42,6 +47,25 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+// Teacher Schema
+const teacherSchema = new mongoose.Schema({
+    name: String,
+    email: String,
+    teachesCourses: [{
+        id: String,
+        name: String,
+        groupNumber: String
+    }],
+    individualLessons: [{
+        studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        lesson: String,
+        courseName: String
+    }],
+    password: String
+});
+
+const Teacher = mongoose.model('Teacher', teacherSchema);
+
 // Course Schema
 const courseSchema = new mongoose.Schema({
     category: String,
@@ -55,7 +79,9 @@ const courseSchema = new mongoose.Schema({
     prices: {
         group: String,
         individual: String
-    }
+    },
+    meetLink: String,
+    materialsLink: String
 });
 
 const Course = mongoose.model('Course', courseSchema);
@@ -78,7 +104,7 @@ const blogPostSchema = new mongoose.Schema({
 
 const BlogPost = mongoose.model('BlogPost', blogPostSchema);
 
-// Application Schema (for course applications)
+// Application Schema
 const applicationSchema = new mongoose.Schema({
     name: String,
     contact: String,
@@ -89,9 +115,20 @@ const applicationSchema = new mongoose.Schema({
 
 const Application = mongoose.model('Application', applicationSchema);
 
+// Refresh Token Schema
+const refreshTokenSchema = new mongoose.Schema({
+    token: String,
+    userId: { type: mongoose.Schema.Types.ObjectId, refPath: 'userType' },
+    userType: { type: String, enum: ['User', 'Teacher'] },
+    expiresAt: Date
+});
+
+const RefreshToken = mongoose.model('RefreshToken', refreshTokenSchema);
+
 // Middleware to verify JWT
 const authenticateToken = (req, res, next) => {
     const token = req.headers['authorization']?.split(' ')[1];
+    console.log('Received token:', token);
     if (!token) {
         console.error('No token provided in request headers');
         return res.status(401).json({ message: 'Токен не надано' });
@@ -99,7 +136,7 @@ const authenticateToken = (req, res, next) => {
 
     jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key', (err, user) => {
         if (err) {
-            console.error('Invalid token:', err.message);
+            console.error('Token verification error:', err.message);
             return res.status(403).json({ message: 'Недійсний токен' });
         }
         req.user = user;
@@ -111,22 +148,17 @@ const authenticateToken = (req, res, next) => {
 app.post('/api/register', async (req, res) => {
     try {
         const { name, email, password } = req.body;
-        
-        // Validate input
         if (!name || !email || !password) {
             return res.status(400).json({ message: 'Усі поля є обов’язковими' });
         }
 
-        // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: 'Користувач з такою поштою вже існує' });
         }
 
-        // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create new user
         const user = new User({
             name,
             email,
@@ -139,12 +171,19 @@ app.post('/api/register', async (req, res) => {
 
         await user.save();
         
-        // Generate JWT token
-        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET || 'your-secret-key', { expiresIn: '1h' });
-        
+        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET || 'your-secret-key');
+        const refreshToken = jwt.sign({ email: user.email }, process.env.JWT_SECRET || 'your-secret-key');
+        await new RefreshToken({
+            token: refreshToken,
+            userId: user._id,
+            userType: 'User',
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        }).save();
+
         res.status(201).json({ 
             message: 'Реєстрація успішна',
             token,
+            refreshToken,
             user: {
                 name: user.name,
                 email: user.email,
@@ -152,8 +191,60 @@ app.post('/api/register', async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error during registration:', error);
-        res.status(500).json({ message: 'Помилка сервера' });
+        console.error('Error during registration:', error.message, error.stack);
+        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
+    }
+});
+
+// Teacher Registration API endpoint
+app.post('/api/teacher-register', async (req, res) => {
+    try {
+        const { name, email, password, teachesCourses, individualLessons } = req.body;
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: 'ПІБ, електронна пошта та пароль є обов’язковими' });
+        }
+
+        const existingTeacher = await Teacher.findOne({ email });
+        if (existingTeacher) {
+            return res.status(400).json({ message: 'Викладач з такою електронною поштою вже існує' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const teacher = new Teacher({
+            name,
+            email,
+            teachesCourses: teachesCourses || [],
+            individualLessons: individualLessons || [],
+            password: hashedPassword
+        });
+
+        await teacher.save();
+        
+        const token = jwt.sign({ teacherId: teacher._id, name: teacher.name, email: teacher.email }, process.env.JWT_SECRET || 'your-secret-key');
+        const refreshToken = jwt.sign({ teacherId: teacher._id, name: teacher.name, email: teacher.email }, process.env.JWT_SECRET || 'your-secret-key');
+        await new RefreshToken({
+            token: refreshToken,
+            userId: teacher._id,
+            userType: 'Teacher',
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        }).save();
+
+        res.status(201).json({ 
+            message: 'Реєстрація викладача успішна',
+            token,
+            refreshToken,
+            teacher: {
+                name: teacher.name,
+                email: teacher.email,
+                _id: teacher._id,
+                teachesCourses: teacher.teachesCourses,
+                individualLessons: teacher.individualLessons
+            }
+        });
+    } catch (error) {
+        console.error('Error during teacher registration:', error.message, error.stack);
+        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
     }
 });
 
@@ -161,30 +252,34 @@ app.post('/api/register', async (req, res) => {
 app.post('/api/login', async (req, res) => {
     try {
         const { email, password } = req.body;
-
-        // Validate input
         if (!email || !password) {
             return res.status(400).json({ message: 'Електронна пошта та пароль є обов’язковими' });
         }
 
-        // Check if user exists
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(401).json({ message: 'Неправильна пошта або пароль' });
         }
 
-        // Compare password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(401).json({ message: 'Неправильна пошта або пароль' });
         }
 
-        // Generate JWT token
-        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET || 'your-secret-key', { expiresIn: '1h' });
+        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET || 'your-secret-key');
+        const refreshToken = jwt.sign({ email: user.email }, process.env.JWT_SECRET || 'your-secret-key');
+        await RefreshToken.deleteMany({ userId: user._id, userType: 'User' });
+        await new RefreshToken({
+            token: refreshToken,
+            userId: user._id,
+            userType: 'User',
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        }).save();
 
         res.status(200).json({
             message: 'Вхід успішний',
             token,
+            refreshToken,
             user: {
                 name: user.name,
                 email: user.email,
@@ -192,75 +287,352 @@ app.post('/api/login', async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Error during login:', error);
-        res.status(500).json({ message: 'Помилка сервера' });
+        console.error('Error during login:', error.message, error.stack);
+        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
+    }
+});
+
+// Teacher Login API endpoint
+app.post('/api/teacher-login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Електронна пошта та пароль є обов’язковими' });
+        }
+
+        const teacher = await Teacher.findOne({ email });
+        if (!teacher) {
+            return res.status(401).json({ message: 'Неправильна електронна пошта або пароль' });
+        }
+
+        const isMatch = await bcrypt.compare(password, teacher.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Неправильна електронна пошта або пароль' });
+        }
+
+        const token = jwt.sign({ teacherId: teacher._id, name: teacher.name, email: teacher.email }, process.env.JWT_SECRET || 'your-secret-key');
+        const refreshToken = jwt.sign({ teacherId: teacher._id, name: teacher.name, email: teacher.email }, process.env.JWT_SECRET || 'your-secret-key');
+        await RefreshToken.deleteMany({ userId: teacher._id, userType: 'Teacher' });
+        await new RefreshToken({
+            token: refreshToken,
+            userId: teacher._id,
+            userType: 'Teacher',
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        }).save();
+
+        res.status(200).json({
+            message: 'Вхід як викладач успішний',
+            token,
+            refreshToken,
+            teacher: {
+                name: teacher.name,
+                email: teacher.email,
+                _id: teacher._id,
+                teachesCourses: teacher.teachesCourses,
+                individualLessons: teacher.individualLessons
+            }
+        });
+    } catch (error) {
+        console.error('Error during teacher login:', error.message, error.stack);
+        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
+    }
+});
+
+// Teacher Login API endpoint (No Expiry)
+app.post('/api/teacher-login-no-expiry', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Електронна пошта та пароль є обов’язковими' });
+        }
+
+        const teacher = await Teacher.findOne({ email });
+        if (!teacher) {
+            return res.status(401).json({ message: 'Неправильна електронна пошта або пароль' });
+        }
+
+        const isMatch = await bcrypt.compare(password, teacher.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: 'Неправильна електронна пошта або пароль' });
+        }
+
+        const token = jwt.sign({ teacherId: teacher._id, name: teacher.name, email: teacher.email }, process.env.JWT_SECRET || 'your-secret-key');
+        const refreshToken = jwt.sign({ teacherId: teacher._id, name: teacher.name, email: teacher.email }, process.env.JWT_SECRET || 'your-secret-key');
+        await RefreshToken.deleteMany({ userId: teacher._id, userType: 'Teacher' });
+        await new RefreshToken({
+            token: refreshToken,
+            userId: teacher._id,
+            userType: 'Teacher'
+        }).save();
+
+        res.status(200).json({
+            message: 'Вхід як викладач без терміну дії успішний',
+            token,
+            refreshToken,
+            teacher: {
+                name: teacher.name,
+                email: teacher.email,
+                _id: teacher._id,
+                teachesCourses: teacher.teachesCourses,
+                individualLessons: teacher.individualLessons
+            }
+        });
+    } catch (error) {
+        console.error('Error during teacher login (no expiry):', error.message, error.stack);
+        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
+    }
+});
+
+// Refresh Token API endpoint
+app.post('/api/refresh-token', async (req, res) => {
+    try {
+        const { refreshToken } = req.body;
+        console.log('Received refresh token:', refreshToken);
+        if (!refreshToken) {
+            console.error('No refresh token provided');
+            return res.status(400).json({ message: 'Refresh token не надано' });
+        }
+
+        const tokenDoc = await RefreshToken.findOne({ token: refreshToken });
+        if (!tokenDoc) {
+            console.error('Refresh token not found in database');
+            return res.status(403).json({ message: 'Недійсний refresh token' });
+        }
+        if (tokenDoc.expiresAt && tokenDoc.expiresAt < new Date()) {
+            console.error('Refresh token expired:', tokenDoc.expiresAt);
+            await RefreshToken.deleteOne({ _id: tokenDoc._id });
+            return res.status(403).json({ message: 'Прострочений refresh token' });
+        }
+
+        const Model = tokenDoc.userType === 'User' ? User : Teacher;
+        const user = await Model.findById(tokenDoc.userId);
+        if (!user) {
+            console.error('User not found for ID:', tokenDoc.userId);
+            return res.status(404).json({ message: 'Користувача не знайдено' });
+        }
+
+        const payload = tokenDoc.userType === 'User' 
+            ? { email: user.email }
+            : { teacherId: user._id, name: user.name, email: user.email };
+        const newToken = jwt.sign(payload, process.env.JWT_SECRET || 'your-secret-key');
+        console.log('New token generated for user:', user.email);
+
+        res.json({ token: newToken });
+    } catch (error) {
+        console.error('Error refreshing token:', error.message, error.stack);
+        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
     }
 });
 
 // Profile API endpoint
 app.get('/api/profile', authenticateToken, async (req, res) => {
     try {
-        const user = await User.findOne({ email: req.user.email }, 'name email registered language courses schedule');
-        if (!user) {
-            console.error('User not found for email:', req.user.email);
-            return res.status(404).json({ message: 'Користувача не знайдено' });
+        let user;
+        if (req.query.studentId) {
+            user = await User.findById(req.query.studentId, 'name courses meetLink materialsLink').lean();
+            if (!user) {
+                console.error('Student not found for ID:', req.query.studentId);
+                return res.status(404).json({ message: 'Студента не знайдено' });
+            }
+            res.json({
+                name: user.name || 'Невідомо',
+                meetLink: user.meetLink || '#',
+                materialsLink: user.materialsLink || '#',
+                courses: user.courses || []
+            });
+        } else {
+            user = await User.findOne({ email: req.user.email }, 'name email registered language courses schedule').lean();
+            if (!user) {
+                console.error('User not found for email:', req.user.email);
+                return res.status(404).json({ message: 'Користувача не знайдено' });
+            }
+            const reviews = await Review.find({ author: user.name }, 'text').sort({ _id: -1 }).lean();
+            res.json({
+                name: user.name,
+                email: user.email,
+                registered: user.registered,
+                language: user.language,
+                courses: user.courses,
+                schedule: user.schedule,
+                reviews: reviews.map(review => review.text)
+            });
         }
-
-        // Fetch reviews authored by the user
-        const reviews = await Review.find({ author: user.name }, 'text').sort({ _id: -1 });
-
-        res.json({
-            name: user.name,
-            email: user.email,
-            registered: user.registered,
-            language: user.language,
-            courses: user.courses,
-            schedule: user.schedule,
-            reviews: reviews.map(review => review.text)
-        });
     } catch (error) {
-        console.error('Error fetching profile for email:', req.user.email, error);
-        res.status(500).json({ message: 'Помилка сервера' });
+        console.error('Error fetching profile:', error.message, error.stack);
+        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
     }
 });
 
-// Home API endpoint (Courses and Reviews)
+// Teacher Profile API endpoint
+app.get('/api/teacher-profile', authenticateToken, async (req, res) => {
+    try {
+        console.log('Fetching teacher profile for ID:', req.user.teacherId);
+        const teacher = await Teacher.findById(req.user.teacherId)
+            .lean();
+        if (!teacher) {
+            console.error('Teacher not found for ID:', req.user.teacherId);
+            return res.status(404).json({ message: 'Викладача не знайдено' });
+        }
+        console.log('Raw teacher data from DB:', teacher);
+
+        // Форматування відповіді для відповідності бажаній структурі
+        const response = {
+            _id: teacher._id.toString(),
+            name: teacher.name,
+            email: teacher.email,
+            teachesCourses: Array.isArray(teacher.teachesCourses) ? teacher.teachesCourses.map(course => ({
+                id: course.id || 'Невідомо',
+                name: course.name || 'Невідомо',
+                groupNumber: course.groupNumber || 'Невідомо'
+            })) : [],
+            individualLessons: Array.isArray(teacher.individualLessons) ? teacher.individualLessons.map(lesson => ({
+                _id: lesson._id?.toString(),
+                studentId: lesson.studentId?.toString() || lesson.studentId,
+                lesson: lesson.lesson || 'Невідомо'
+            })) : []
+        };
+
+        res.json(response);
+    } catch (error) {
+        console.error('Error fetching teacher profile for ID:', req.user.teacherId, error.message, error.stack);
+        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
+    }
+});
+
+// Teacher Dashboard API endpoint
+app.get('/api/teacher-dashboard', authenticateToken, async (req, res) => {
+    try {
+        console.log('Fetching dashboard for teacher ID:', req.user.teacherId);
+
+        // Пошук вчителя з популяцією individualLessons і курсів студентів
+        const teacher = await Teacher.findById(req.user.teacherId)
+            .populate('individualLessons.studentId', 'name meetLink materialsLink courses')
+            .lean();
+
+        if (!teacher) {
+            console.error('Teacher not found for ID:', req.user.teacherId);
+            return res.status(404).json({ message: 'Викладача не знайдено' });
+        }
+        console.log('Teacher raw data:', teacher);
+
+        // Якщо teachesCourses відсутнє, використовуємо individualLessons
+        const rawTeachesCourses = Array.isArray(teacher.teachesCourses) ? teacher.teachesCourses : [];
+        console.log('Raw teachesCourses:', rawTeachesCourses);
+
+        // Збираємо унікальні назви курсів із individualLessons і studentId.courses
+        let courseNames = [];
+        if (teacher.individualLessons && teacher.individualLessons.length) {
+            // Беремо назви уроків як тимчасові назви курсів
+            courseNames = [...new Set(
+                teacher.individualLessons
+                    .filter(lesson => lesson.lesson)
+                    .map(lesson => lesson.lesson)
+            )];
+
+            // Додаємо курси зі студентів
+            teacher.individualLessons.forEach(lesson => {
+                if (lesson.studentId && Array.isArray(lesson.studentId.courses)) {
+                    courseNames = [...new Set([...courseNames, ...lesson.studentId.courses.map(c => c.name || c)])];
+                }
+            });
+        }
+        console.log('Course names to query:', courseNames);
+
+        // Запит до Course для отримання даних
+        const courses = courseNames.length
+            ? await Course.find(
+                  { name: { $in: courseNames } },
+                  'name _id meetLink materialsLink'
+              ).lean()
+            : [];
+        console.log('Found courses:', courses);
+
+        // Створюємо мапу курсів
+        const courseMap = courses.reduce((map, course) => {
+            map[course.name] = {
+                _id: course._id.toString(),
+                meetLink: course.meetLink || '#',
+                materialsLink: course.materialsLink || '#'
+            };
+            return map;
+        }, {});
+        console.log('Course map:', courseMap);
+
+        // Формуємо збагачені курси
+        const enrichedCourses = courseNames.map(courseName => ({
+            id: courseMap[courseName]?._id || 'Невідомо',
+            name: courseName || 'Невідомо',
+            groupNumber: 'Невідомо', // Додайте логіку, якщо groupNumber доступний
+            meetLink: courseMap[courseName]?.meetLink || '#',
+            materialsLink: courseMap[courseName]?.materialsLink || '#'
+        }));
+        console.log('Enriched courses:', enrichedCourses);
+
+        // Формуємо збагачені уроки
+        const enrichedLessons = (teacher.individualLessons || []).map(lesson => ({
+            lesson: lesson.lesson || 'Невідомо',
+            studentName: lesson.studentId?.name || 'Невідомо',
+            studentId: lesson.studentId?._id?.toString() || lesson.studentId || 'Невідомо',
+            courseName: lesson.lesson || 'Невідомо',
+            meetLink: lesson.studentId?.meetLink || courseMap[lesson.lesson]?.meetLink || '#',
+            materialsLink: lesson.studentId?.materialsLink || courseMap[lesson.lesson]?.materialsLink || '#'
+        }));
+        console.log('Enriched lessons:', enrichedLessons);
+
+        res.json({
+            name: teacher.name || 'Невідомо',
+            email: teacher.email || 'Невідомо',
+            teachesCourses: enrichedCourses,
+            individualLessons: enrichedLessons
+        });
+    } catch (error) {
+        console.error('Error fetching teacher dashboard:', error.message, error.stack);
+        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
+    }
+});
+
+// Home API endpoint
 app.get('/api/home', async (req, res) => {
     try {
-        const courses = await Course.find();
-        const reviews = await Review.find();
+        const courses = await Course.find().lean();
+        const reviews = await Review.find().lean();
         res.json({ courses, reviews });
     } catch (error) {
-        console.error('Error fetching home data:', error);
-        res.status(500).json({ message: 'Помилка сервера' });
+        console.error('Error fetching home data:', error.message, error.stack);
+        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
     }
 });
 
 // Blog API endpoint (Get all posts)
 app.get('/api/blog', async (req, res) => {
     try {
-        const posts = await BlogPost.find().sort({ publishedAt: -1 });
+        console.log('Fetching all blog posts...');
+        const posts = await BlogPost.find().sort({ publishedAt: -1 }).lean();
+        if (!posts) {
+            console.warn('No posts found in database');
+            return res.json([]);
+        }
+        console.log(`Found ${posts.length} blog posts`);
         res.json(posts);
     } catch (error) {
-        console.error('Error fetching blog posts:', error);
-        res.status(500).json({ message: 'Помилка сервера' });
+        console.error('Error fetching blog posts:', error.message, error.stack);
+        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
     }
 });
 
-// Blog API endpoint (Create new post)
-app.post('/api/blog', authenticateToken, async (req, res) => {
+// Blog API endpoint (Get single post)
+app.get('/api/blog/:id', async (req, res) => {
     try {
-        const { title, description, content } = req.body;
-        if (!title || !description || !content) {
-            return res.status(400).json({ message: 'Усі поля є обов’язковими' });
+        const { id } = req.params;
+        console.log('Fetching blog post with ID:', id);
+        const post = await BlogPost.findById(id).lean();
+        if (!post) {
+            return res.status(404).json({ message: 'Статтю не знайдено' });
         }
-
-        const post = new BlogPost({ title, description, content });
-        await post.save();
-        res.status(201).json({ message: 'Статтю успішно опубліковано', post });
+        res.json(post);
     } catch (error) {
-        console.error('Error creating blog post:', error);
-        res.status(500).json({ message: 'Помилка сервера' });
+        console.error('Error fetching blog post:', error.message, error.stack);
+        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
     }
 });
 
@@ -280,10 +652,65 @@ app.post('/api/purchase', async (req, res) => {
             date: new Date(date)
         });
         await application.save();
+        console.log('Course application saved:', application);
         res.status(201).json({ message: 'Заявку успішно відправлено' });
     } catch (error) {
-        console.error('Error submitting application:', error);
-        res.status(500).json({ message: 'Помилка сервера' });
+        console.error('Error submitting application:', error.message, error.stack);
+        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
+    }
+});
+
+// Endpoint to add data to teachers collection
+app.post('/api/teachers', authenticateToken, async (req, res) => {
+    try {
+        const { name, email, teachesCourses, individualLessons, password } = req.body;
+
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: 'ПІБ, електронна пошта та пароль є обов’язковими' });
+        }
+
+        const existingTeacher = await Teacher.findOne({ email });
+        if (existingTeacher) {
+            return res.status(400).json({ message: 'Викладач з такою електронною поштою вже існує' });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        const teacher = new Teacher({
+            name,
+            email,
+            teachesCourses: teachesCourses || [],
+            individualLessons: individualLessons || [],
+            password: hashedPassword
+        });
+
+        await teacher.save();
+
+        const token = jwt.sign({ teacherId: teacher._id, name: teacher.name, email: teacher.email }, process.env.JWT_SECRET || 'your-secret-key');
+        const refreshToken = jwt.sign({ teacherId: teacher._id, name: teacher.name, email: teacher.email }, process.env.JWT_SECRET || 'your-secret-key');
+        await new RefreshToken({
+            token: refreshToken,
+            userId: teacher._id,
+            userType: 'Teacher',
+            expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+        }).save();
+
+        console.log('Teacher added with ID:', teacher._id);
+        res.status(201).json({
+            message: 'Викладач успішно доданий',
+            token,
+            refreshToken,
+            teacher: {
+                name: teacher.name,
+                email: teacher.email,
+                _id: teacher._id,
+                teachesCourses: teacher.teachesCourses,
+                individualLessons: teacher.individualLessons
+            }
+        });
+    } catch (error) {
+        console.error('Error adding teacher:', error.message, error.stack);
+        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
     }
 });
 
