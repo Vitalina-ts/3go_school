@@ -9,7 +9,7 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors({ origin: ['http://localhost:3000', 'http://localhost:5500'] }));
 app.use(express.json());
 app.use(express.static('public'));
 
@@ -41,7 +41,8 @@ const userSchema = new mongoose.Schema({
         courseName: String,
         title: String,
         date: Date,
-        meetLink: String
+        meetLink: String,
+        materialsLink: String
     }]
 });
 
@@ -54,12 +55,15 @@ const teacherSchema = new mongoose.Schema({
     teachesCourses: [{
         id: String,
         name: String,
-        groupNumber: String
+        groupNumber: String,
+        materialsLink: String
     }],
     individualLessons: [{
         studentId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
         lesson: String,
-        courseName: String
+        courseName: String,
+        meetLink: String,
+        materialsLink: String
     }],
     password: String
 });
@@ -429,16 +433,15 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
     try {
         let user;
         if (req.query.studentId) {
-            user = await User.findById(req.query.studentId, 'name courses meetLink materialsLink').lean();
+            user = await User.findById(req.query.studentId, 'name courses schedule').lean();
             if (!user) {
                 console.error('Student not found for ID:', req.query.studentId);
                 return res.status(404).json({ message: 'Студента не знайдено' });
             }
             res.json({
                 name: user.name || 'Невідомо',
-                meetLink: user.meetLink || '#',
-                materialsLink: user.materialsLink || '#',
-                courses: user.courses || []
+                courses: user.courses || [],
+                schedule: user.schedule || []
             });
         } else {
             user = await User.findOne({ email: req.user.email }, 'name email registered language courses schedule').lean();
@@ -467,126 +470,47 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
 app.get('/api/teacher-profile', authenticateToken, async (req, res) => {
     try {
         console.log('Fetching teacher profile for ID:', req.user.teacherId);
-        const teacher = await Teacher.findById(req.user.teacherId)
-            .lean();
+        const teacher = await Teacher.findById(req.user.teacherId).lean();
         if (!teacher) {
             console.error('Teacher not found for ID:', req.user.teacherId);
             return res.status(404).json({ message: 'Викладача не знайдено' });
         }
         console.log('Raw teacher data from DB:', teacher);
 
-        // Форматування відповіді для відповідності бажаній структурі
+        // Отримання materialsLink для курсів із колекції Course
+        const courseNames = teacher.teachesCourses?.map(course => course.name) || [];
+        const courses = courseNames.length
+            ? await Course.find({ name: { $in: courseNames } }, 'name materialsLink').lean()
+            : [];
+        const courseMap = courses.reduce((map, course) => {
+            map[course.name] = course.materialsLink || '#';
+            return map;
+        }, {});
+
         const response = {
             _id: teacher._id.toString(),
             name: teacher.name,
             email: teacher.email,
             teachesCourses: Array.isArray(teacher.teachesCourses) ? teacher.teachesCourses.map(course => ({
-                id: course.id || 'Невідомо',
+                courseId: course.id || 'Невідомо',
                 name: course.name || 'Невідомо',
-                groupNumber: course.groupNumber || 'Невідомо'
+                groupNumber: course.groupNumber || 'Невідомо',
+                materialsLink: course.materialsLink || courseMap[course.name] || '#' // Використовуємо materialsLink із teacher.teachesCourses або Course
             })) : [],
             individualLessons: Array.isArray(teacher.individualLessons) ? teacher.individualLessons.map(lesson => ({
-                _id: lesson._id?.toString(),
-                studentId: lesson.studentId?.toString() || lesson.studentId,
-                lesson: lesson.lesson || 'Невідомо'
+                individualId: lesson._id ? lesson._id.toString() : 'Невідомо',
+                studentId: lesson.studentId?.toString() || lesson.studentId || 'Невідомо',
+                lesson: lesson.lesson || 'Невідомо',
+                courseName: lesson.courseName || 'Невідомо',
+                meetLink: lesson.meetLink || '#',
+                materialsLink: lesson.materialsLink || '#' // Використовуємо materialsLink
             })) : []
         };
 
+        console.log('Teacher profile response:', response);
         res.json(response);
     } catch (error) {
         console.error('Error fetching teacher profile for ID:', req.user.teacherId, error.message, error.stack);
-        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
-    }
-});
-
-// Teacher Dashboard API endpoint
-app.get('/api/teacher-dashboard', authenticateToken, async (req, res) => {
-    try {
-        console.log('Fetching dashboard for teacher ID:', req.user.teacherId);
-
-        // Пошук вчителя з популяцією individualLessons і курсів студентів
-        const teacher = await Teacher.findById(req.user.teacherId)
-            .populate('individualLessons.studentId', 'name meetLink materialsLink courses')
-            .lean();
-
-        if (!teacher) {
-            console.error('Teacher not found for ID:', req.user.teacherId);
-            return res.status(404).json({ message: 'Викладача не знайдено' });
-        }
-        console.log('Teacher raw data:', teacher);
-
-        // Якщо teachesCourses відсутнє, використовуємо individualLessons
-        const rawTeachesCourses = Array.isArray(teacher.teachesCourses) ? teacher.teachesCourses : [];
-        console.log('Raw teachesCourses:', rawTeachesCourses);
-
-        // Збираємо унікальні назви курсів із individualLessons і studentId.courses
-        let courseNames = [];
-        if (teacher.individualLessons && teacher.individualLessons.length) {
-            // Беремо назви уроків як тимчасові назви курсів
-            courseNames = [...new Set(
-                teacher.individualLessons
-                    .filter(lesson => lesson.lesson)
-                    .map(lesson => lesson.lesson)
-            )];
-
-            // Додаємо курси зі студентів
-            teacher.individualLessons.forEach(lesson => {
-                if (lesson.studentId && Array.isArray(lesson.studentId.courses)) {
-                    courseNames = [...new Set([...courseNames, ...lesson.studentId.courses.map(c => c.name || c)])];
-                }
-            });
-        }
-        console.log('Course names to query:', courseNames);
-
-        // Запит до Course для отримання даних
-        const courses = courseNames.length
-            ? await Course.find(
-                  { name: { $in: courseNames } },
-                  'name _id meetLink materialsLink'
-              ).lean()
-            : [];
-        console.log('Found courses:', courses);
-
-        // Створюємо мапу курсів
-        const courseMap = courses.reduce((map, course) => {
-            map[course.name] = {
-                _id: course._id.toString(),
-                meetLink: course.meetLink || '#',
-                materialsLink: course.materialsLink || '#'
-            };
-            return map;
-        }, {});
-        console.log('Course map:', courseMap);
-
-        // Формуємо збагачені курси
-        const enrichedCourses = courseNames.map(courseName => ({
-            id: courseMap[courseName]?._id || 'Невідомо',
-            name: courseName || 'Невідомо',
-            groupNumber: 'Невідомо', // Додайте логіку, якщо groupNumber доступний
-            meetLink: courseMap[courseName]?.meetLink || '#',
-            materialsLink: courseMap[courseName]?.materialsLink || '#'
-        }));
-        console.log('Enriched courses:', enrichedCourses);
-
-        // Формуємо збагачені уроки
-        const enrichedLessons = (teacher.individualLessons || []).map(lesson => ({
-            lesson: lesson.lesson || 'Невідомо',
-            studentName: lesson.studentId?.name || 'Невідомо',
-            studentId: lesson.studentId?._id?.toString() || lesson.studentId || 'Невідомо',
-            courseName: lesson.lesson || 'Невідомо',
-            meetLink: lesson.studentId?.meetLink || courseMap[lesson.lesson]?.meetLink || '#',
-            materialsLink: lesson.studentId?.materialsLink || courseMap[lesson.lesson]?.materialsLink || '#'
-        }));
-        console.log('Enriched lessons:', enrichedLessons);
-
-        res.json({
-            name: teacher.name || 'Невідомо',
-            email: teacher.email || 'Невідомо',
-            teachesCourses: enrichedCourses,
-            individualLessons: enrichedLessons
-        });
-    } catch (error) {
-        console.error('Error fetching teacher dashboard:', error.message, error.stack);
         res.status(500).json({ message: `Помилка сервера: ${error.message}` });
     }
 });
@@ -595,8 +519,15 @@ app.get('/api/teacher-dashboard', authenticateToken, async (req, res) => {
 app.get('/api/home', async (req, res) => {
     try {
         const courses = await Course.find().lean();
+        console.log('Courses sent to client:', courses);
         const reviews = await Review.find().lean();
-        res.json({ courses, reviews });
+        res.json({ 
+            courses: courses.map(course => ({
+                ...course,
+                materialsLink: course.materialsLink || '#'
+            })),
+            reviews 
+        });
     } catch (error) {
         console.error('Error fetching home data:', error.message, error.stack);
         res.status(500).json({ message: `Помилка сервера: ${error.message}` });
