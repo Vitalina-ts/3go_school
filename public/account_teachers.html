@@ -217,7 +217,7 @@
               <strong>Курс: ${course.name || 'Невідомо'}</strong><br>
               Група: ${course.groupNumber || 'Невідомо'}<br>
               ID курсу: ${course.id || 'Невідомо'}<br>
-              <a href="/course/${course.id || '#'}" class="text-blue-400 underline">Перейти до курсу</a>
+              <button onclick="window.location.href='/course/${course.id || '#'}" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition duration-200">Перейти до курсу</button>
             `;
             coursesList.appendChild(listItem);
           }
@@ -238,8 +238,7 @@
             listItem.innerHTML = `
               <strong>Урок: ${lesson.lesson || 'Невідомо'}</strong><br>
               Студент: ${studentData.name || 'Невідомо'} (ID: ${lesson.studentId || 'Невідомо'})<br>
-              <a href="${studentData.meetLink || '#'}">Міт</a><br>
-              <a href="${studentData.materialsLink || '#'}">Матеріали</a>
+              <button onclick="window.location.href='/course/${lesson.id || '#'}" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition duration-200">Перейти до курсу</button>
             `;
             lessonsList.appendChild(listItem);
           }
