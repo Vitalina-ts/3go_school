@@ -30,7 +30,6 @@
     <div class="container mx-auto px-4 flex justify-between items-center">
       <a href="/" class="text-2xl font-bold">SkillBridge 🌟</a>
       <div class="hidden md:flex space-x-6">
-        <a href="blog_admin.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Зміни блогу</a>
         <a href="login_teachers.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
       </div>
       <button id="hamburger-btn" class="md:hidden flex flex-col space-y-1 hamburger">
@@ -40,8 +39,7 @@
       </button>
     </div>
     <div id="mobile-menu" class="md:hidden menu-slide mt-4 px-4 bg-gray-800 rounded-lg">
-        <a href="blog_admin.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Зміни блогу</a>
-        <a href="login_teachers.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
+        <a href="login_teachers.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Вийти</a>
     </div>
   </nav>
 
@@ -96,14 +94,14 @@
     document.addEventListener('DOMContentLoaded', async () => {
       // Отримання токена з localStorage
       const token = localStorage.getItem('teacher-token');
-      console.log('Token:', token); // Дебаг: виведення токена
+      console.log('Token:', token);
       if (!token) {
         alert('Токен не знайдено. Будь ласка, увійдіть знову.');
         window.location.href = 'login_teachers.html';
         return;
       }
 
-      // Функція для отримання профілю викладача з повторними спробами та деталями помилки
+      // Функція для отримання профілю викладача
       const fetchTeacherProfile = async (retries = 3, delay = 1000) => {
         for (let i = 0; i < retries; i++) {
           try {
@@ -114,17 +112,15 @@
                 'Content-Type': 'application/json'
               }
             });
-
             if (!response.ok) {
-              const errorText = await response.text(); // Отримати текст помилки
+              const errorText = await response.text();
               throw new Error(`Помилка при отриманні профілю: ${response.status} ${response.statusText} - ${errorText}`);
             }
-
             const data = await response.json();
-            console.log('API Response (Full):', data); // Дебаг: виведення повної відповіді
+            console.log('API Response (Teacher Profile):', data);
             return data;
           } catch (error) {
-            console.error(`Спроба ${i + 1} не вдалася:`, error.message); // Деталі помилки
+            console.error(`Спроба ${i + 1} не вдалася:`, error.message);
             if (i < retries - 1) {
               await new Promise(resolve => setTimeout(resolve, delay));
               continue;
@@ -132,19 +128,6 @@
             console.error('Помилка при отриманні профілю після всіх спроб:', error.message);
             return null;
           }
-        }
-      };
-
-      // Функція для отримання даних курсу за назвою
-      const fetchCourseData = async (courseName) => {
-        try {
-          const response = await fetch('http://localhost:3000/api/home');
-          if (!response.ok) throw new Error('Помилка при отриманні курсів');
-          const { courses } = await response.json();
-          return courses.find(course => course.name === courseName) || {};
-        } catch (error) {
-          console.error('Помилка при отриманні даних курсу:', error);
-          return {};
         }
       };
 
@@ -160,6 +143,7 @@
           });
           if (!response.ok) throw new Error('Помилка при отриманні даних студента');
           const data = await response.json();
+          console.log('Student Data:', data);
           return data;
         } catch (error) {
           console.error('Помилка при отриманні даних студента:', error);
@@ -167,37 +151,14 @@
         }
       };
 
-      // Функція для отримання списку студентів курсу
-      const fetchCourseStudents = async (courseName) => {
-        try {
-          const response = await fetch(`http://localhost:3000/api/course-students?courseName=${encodeURIComponent(courseName)}`, {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-              'Content-Type': 'application/json'
-            }
-          });
-          if (!response.ok) throw new Error('Помилка при отриманні студентів курсу');
-          const data = await response.json();
-          return data.students || [];
-        } catch (error) {
-          console.error('Помилка при отриманні студентів курсу:', error);
-          return [];
-        }
-      };
-
       // Ініціалізація сторінки
       const initPage = async () => {
         const teacherData = await fetchTeacherProfile();
-        console.log('Teacher Data:', teacherData); // Дебаг
-
         if (!teacherData) {
           const coursesList = document.getElementById('courses-list');
           coursesList.innerHTML = '<li class="p-2 bg-gray-700 rounded error-message">Помилка завантаження даних. Перевірте консоль для деталей.</li>';
           return;
         }
-
-        console.log('Teaches Courses (raw):', teacherData?.teachesCourses); // Дебаг
 
         // Відображення інформації про викладача
         document.getElementById('teacher-name').textContent = `Ім’я: ${teacherData.name || 'Невідомо'}`;
@@ -205,40 +166,41 @@
 
         // Відображення курсів
         const coursesList = document.getElementById('courses-list');
-        coursesList.innerHTML = ''; // Очистити вміст
+        coursesList.innerHTML = '';
         const courses = teacherData.teachesCourses || [];
-        console.log('Processed Courses:', courses); // Дебаг
+        console.log('Processed Courses:', courses);
         if (Array.isArray(courses) && courses.length > 0) {
           for (const course of courses) {
-            console.log('Processing course:', course); // Дебаг
+            console.log('Processing course:', course);
+            const materialsLink = course.materialsLink || '#';
             const listItem = document.createElement('li');
             listItem.className = 'p-2 bg-gray-700 rounded';
             listItem.innerHTML = `
               <strong>Курс: ${course.name || 'Невідомо'}</strong><br>
               Група: ${course.groupNumber || 'Невідомо'}<br>
-              ID курсу: ${course.id || 'Невідомо'}<br>
-              <button onclick="window.location.href='/course/${course.id || '#'}" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition duration-200">Перейти до курсу</button>
+              <button onclick="window.location.href='${materialsLink}'" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition duration-200" ${materialsLink === '#' ? 'disabled' : ''}>Перейти до курсу</button>
             `;
             coursesList.appendChild(listItem);
           }
         } else {
-          console.log('No courses or invalid format:', courses); // Дебаг
+          console.log('No courses or invalid format:', courses);
           coursesList.innerHTML = '<li class="p-2 bg-gray-700 rounded">Немає призначених курсів</li>';
         }
 
         // Відображення індивідуальних занять
         const lessonsList = document.getElementById('lessons-list');
-        lessonsList.innerHTML = ''; // Очистити вміст
+        lessonsList.innerHTML = '';
         if (teacherData.individualLessons && Array.isArray(teacherData.individualLessons) && teacherData.individualLessons.length > 0) {
           for (const lesson of teacherData.individualLessons) {
             const studentData = await fetchStudentData(lesson.studentId);
-            console.log('Student Data for lesson:', studentData); // Дебаг
+            console.log('Student Data for lesson:', studentData);
+            const materialsLink = lesson.materialsLink || '#';
             const listItem = document.createElement('li');
             listItem.className = 'p-2 bg-gray-700 rounded';
             listItem.innerHTML = `
               <strong>Урок: ${lesson.lesson || 'Невідомо'}</strong><br>
               Студент: ${studentData.name || 'Невідомо'} (ID: ${lesson.studentId || 'Невідомо'})<br>
-              <button onclick="window.location.href='/course/${lesson.id || '#'}" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition duration-200">Перейти до курсу</button>
+              <button onclick="window.location.href='${materialsLink}'" class="mt-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition duration-200" ${materialsLink === '#' ? 'disabled' : ''}>Перейти до курсу</button>
             `;
             lessonsList.appendChild(listItem);
           }
@@ -253,12 +215,10 @@
       // Навігація
       const hamburger = document.getElementById('hamburger-btn');
       const menu = document.getElementById('mobile-menu');
-
       hamburger.addEventListener('click', () => {
         menu.classList.toggle('open');
         hamburger.classList.toggle('open');
       });
-
       menu.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
           menu.classList.remove('open');
