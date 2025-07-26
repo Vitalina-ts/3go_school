@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Математичні матеріали – SkillBridge</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1509228622682-2f4f3b5a97f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+        }
+        .menu-slide {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .menu-slide.open {
+            max-height: 500px;
+            opacity: 1;
+        }
+        .hamburger div {
+            transition: all 0.3s ease;
+        }
+        .hamburger.open .bar1 {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.open .bar2 {
+            opacity: 0;
+        }
+        .hamburger.open .bar3 {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+        section {
+            padding-top: 96px;
+        }
+        .material-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            background: linear-gradient(145deg, #2456c2, #343a45);
+        }
+        .material-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        .btn-cta {
+            background: linear-gradient(to right, #114fd5, #a855f7);
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        .btn-cta:hover {
+            transform: scale(1.05);
+            background: linear-gradient(to right, #1e40af, #7e22ce);
+        }
+        .btn-test {
+            background: linear-gradient(to right, #10b981, #059669);
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        .btn-test:hover {
+            transform: scale(1.05);
+            background: linear-gradient(to right, #047857, #065f46);
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #2563eb, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        @supports (-webkit-background-clip: text) {
+            .gradient-text {
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        }
+        @supports not (-webkit-background-clip: text) {
+            .gradient-text {
+                color: #2563eb;
+            }
+        }
+        #primary-math .grid,
+        #algebra-geometry .grid,
+        #dpa-prep .grid,
+        #nmt .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+        .material-card {
+            width: 100%;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <!-- Навігаційне меню -->
+    <nav class="fixed top-0 left-0 w-full bg-gradient-to-r from-blue-700 to-purple-600 text-white py-4 z-50 shadow-2xl">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <a href="/" class="text-3xl font-extrabold tracking-tight">SkillBridge 🧮</a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="home.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Головна</a>
+                    <a href="about.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Про нас</a>
+                    <a href="course.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Курси</a>
+                    <a href="math.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Математика</a>
+                    <a href="programming.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Програмування</a>
+                    <a href="blog.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Блог</a>
+                    <a href="login.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
+                </div>
+                <button id="hamburger-btn" class="md:hidden flex flex-col space-y-1 hamburger">
+                    <div class="bar1 w-8 h-1 bg-white rounded"></div>
+                    <div class="bar2 w-8 h-1 bg-white rounded"></div>
+                    <div class="bar3 w-8 h-1 bg-white rounded"></div>
+                </button>
+            </div>
+            <div id="mobile-menu" class="md:hidden menu-slide mt-4 bg-gray-800 text-gray-100 rounded-xl p-4 shadow-lg">
+                <a href="home.html" class="block text-lg font-medium hover:text-blue-200 transition duration-200">Головна</a>
+                <a href="about.html" class="block text-lg font-medium hover:text-blue-200 transition duration-200">Про нас</a>
+                <a href="course.html" class="block text-lg font-medium hover:text-blue-200 transition duration-200">Курси</a>
+                <a href="math.html" class="block text-lg font-medium hover:text-blue-200 transition duration-200">Математика</a>
+                <a href="programming.html" class="block text-lg font-medium hover:text-blue-200 transition duration-200">Програмування</a>
+                <a href="blog.html" class="block text-lg font-medium hover:text-blue-200 transition duration-200">Блог</a>
+                <a href="login.html" class="block text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Геройський блок -->
+    <section class="hero-bg text-center text-white">
+        <div class="container mx-auto px-4 py-16">
+            <h1 class="text-5xl md:text-6xl font-extrabold mb-6 gradient-text">Математичні матеріали – SkillBridge</h1>
+            <p class="text-xl md:text-2xl mb-10 leading-relaxed">Навчайся з розумінням — від простого до складного! 🧠</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-6">
+                <a href="course.html" class="text-white px-8 py-4 rounded-xl text-lg font-semibold btn-cta">Доєднатися до наших курсів</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Рівні навчання -->
+    <section id="levels" class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-100 gradient-text">Рівні навчання</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📚</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Математика для початкової школи</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Прості та цікаві уроки для 1–4 класів.</p>
+                    <a href="#primary-math" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Переглянути</a>
+                </div>
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">🧮</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Алгебра та геометрія</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Основи для учнів 5–8 класів.</p>
+                    <a href="#algebra-geometry" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Переглянути</a>
+                </div>
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📝</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Підготовка до контрольних та ДПА</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Ефективна підготовка для 9–11 класів.</p>
+                    <a href="#dpa-prep" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Переглянути</a>
+                </div>
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">🎯</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Підготовка до НМТ</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Тести, відео та завдання для успіху.</p>
+                    <a href="#nmt" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Переглянути</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Математика для початкової школи -->
+    <section id="primary-math" class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-100 gradient-text">Математика для початкової школи</h2>
+            <div class="grid grid-cols-2 gap-8">
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-class="1-4" data-type="arithmetic" data-format="pdf">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📘</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Основи додавання</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Прості завдання з додавання для 1–2 класів.</p>
+                    <p class="text-sm text-gray-500 mb-4">1–4 класи, базовий рівень</p>
+                    <a href="https://www.canva.com/design/DAGtXI1hC6M/tshwchH-ygjAl5T4UHjsdQ/edit?utm_content=DAGtXI1hC6M&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Завантажити PDF</a>
+                </div>
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-class="1-4" data-type="arithmetic" data-format="test">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📝</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Тест на додавання</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Прості приклади для перевірки знань.</p>
+                    <p class="text-sm text-gray-500 mb-4">1–4 класи, базовий рівень</p>
+                    <a href="https://wordwall.net/uk/resource/95047374" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-test inline-block text-center">Пройти тест</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Алгебра та геометрія -->
+    <section id="algebra-geometry" class="py-16 bg-gray-900">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-100 gradient-text">Алгебра та геометрія</h2>
+            <div class="grid grid-cols-2 gap-8">
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-class="5-8" data-type="algebra" data-format="pdf">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📘</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Дроби</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Вивчення дробів: додавання, віднімання, множення.</p>
+                    <p class="text-sm text-gray-500 mb-4">5–8 класи, базовий рівень</p>
+                    <a href="https://www.canva.com/design/DAGt0ZtUTaE/fQZN6CAXOGrT-GS7MPz1wg/edit?utm_content=DAGt0ZtUTaE&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Завантажити PDF</a>
+                </div>
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-class="5-8" data-type="algebra" data-format="test">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📝</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Тест на дроби</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Перевірка знань з алгебри.</p>
+                    <p class="text-sm text-gray-500 mb-4">5–8 класи, базовий рівень</p>
+                    <a href="https://wordwall.net/uk/resource/95048015" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-test inline-block text-center">Пройти тест</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Підготовка до контрольних та ДПА -->
+    <section id="dpa-prep" class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-100 gradient-text">Підготовка до контрольних та ДПА</h2>
+            <div class="grid grid-cols-2 gap-8">
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-class="9-11" data-type="geometry" data-format="pdf">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📘</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Трикутники</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Теорія та задачі для підготовки до ДПА.</p>
+                    <p class="text-sm text-gray-500 mb-4">9–11 класи, поглиблений рівень</p>
+                    <a href="https://www.canva.com/design/DAGt0UNm1m4/wp-lWoy8sTwUr2AiZOBz-g/edit?utm_content=DAGt0UNm1m4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Завантажити PDF</a>
+                </div>
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-class="9-11" data-type="geometry" data-format="test">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📝</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Тест на трикутники</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Тест для підготовки до ДПА.</p>
+                    <p class="text-sm text-gray-500 mb-4">9–11 класи, поглиблений рівень</p>
+                    <a href="https://wordwall.net/uk/resource/95048798" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-test inline-block text-center">Пройти тест</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Підготовка до НМТ -->
+    <section id="nmt" class="py-16 bg-gray-900">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-100 gradient-text">Підготовка до НМТ</h2>
+            <p class="text-center text-gray-400 mb-8 text-lg">Отримайте доступ до тем, прикладів, відеоуроків та тестів для успішної підготовки до НМТ!</p>
+            <div class="grid grid-cols-2 gap-8">
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-class="nmt" data-type="algebra" data-format="pdf">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📘</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Трекер тем для НМТ</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Теорія та приклади для НМТ.</p>
+                    <p class="text-sm text-gray-500 mb-4">НМТ, поглиблений рівень</p>
+                    <a href="https://www.canva.com/design/DAGt0Y_ulJY/M-Uavt2itNwckLv5IyZ_7Q/edit?utm_content=DAGt0Y_ulJY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Завантажити PDF</a>
+                </div>
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-class="nmt" data-type="algebra" data-format="test">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📝</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Пробний тест НМТ</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Демо-тест з математики.</p>
+                    <p class="text-sm text-gray-500 mb-4">НМТ, поглиблений рівень</p>
+                    <a href="https://www.canva.com/design/DAGt5DZEQ7M/T6rLVlmNXAB0Mm2NzbBgmw/edit?utm_content=DAGt5DZEQ7M&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-test inline-block text-center">Пройти тест</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer class="bg-gradient-to-r from-blue-700 to-purple-600 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3>Контакти</h3>
+                    <p class="text-white">📧 info:SkillBridgeUA@gmail.com</p>
+                    <p class="text-white">Telegram: @SkillBridgeUA</p>
+                    <p class="text-white">Instagram: @SkillBridgeUA</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold">Інформація</h3>
+                    <a href="privac.html" class="block hover:text-blue-300 transition duration-200">Політика конфіденційності</a>
+                </div>
+            </div>
+            <p class="text-center mt-4 text-gray-300">Оновлено: 09:06 AM EEST, Thursday, July 24, 2025</p>
+            <p class="text-center mt-2 text-gray-300">© 2025 BrainHub. Усі права захищено.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Фільтрація матеріалів
+        function filterMaterials(filter) {
+            const sections = ['#primary-math', '#algebra-geometry', '#dpa-prep', '#nmt'];
+            sections.forEach(section => {
+                const cards = document.querySelectorAll(`${section} .material-card`);
+                cards.forEach(card => {
+                    const classFilter = card.getAttribute('data-class');
+                    const typeFilter = card.getAttribute('data-type');
+                    const formatFilter = card.getAttribute('data-format');
+                    if (filter === 'all' || classFilter === filter || typeFilter === filter || formatFilter === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // Гамбургер-меню
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburgerBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+            hamburgerBtn.classList.toggle('open');
+        });
+
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+                hamburgerBtn.classList.remove('open');
+            });
+        });
+    </script>
+</body>
+</html>
