@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+<<<<<<< HEAD
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
@@ -22,6 +23,13 @@
     "mongoose": "^8.16.4",
     "nodemon": "^3.1.10",
     "sanitize-html": "^2.17.0"
+=======
+    "cors": "^2.8.5",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-validator": "^7.2.1",
+    "mongoose": "^8.16.3"
+>>>>>>> 80f0ef3ac22c6cdd502c0ac2c500f792fd868571
   },
   "description": ""
 }

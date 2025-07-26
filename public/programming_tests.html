@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -339,3 +340,346 @@
     </script>
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Матеріали для програмування – SkillBridge</title>
+    <meta name="description" content="Вивчайте програмування з BrainHub: курси Scratch, Python, HTML, CSS, JavaScript для всіх рівнів.">
+    <meta name="keywords" content="програмування, Scratch, Python, HTML, CSS, JavaScript, онлайн-навчання, курси програмування">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+        .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1516321310766-78e83a6294e3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+        }
+        .menu-slide {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .menu-slide.open {
+            max-height: 500px;
+            opacity: 1;
+        }
+        .hamburger div {
+            transition: all 0.3s ease;
+        }
+        .hamburger.open .bar1 {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.open .bar2 {
+            opacity: 0;
+        }
+        .hamburger.open .bar3 {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+        section {
+            padding-top: 96px;
+        }
+        .material-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            background: linear-gradient(145deg, #1f2937, #374151);
+        }
+        .material-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        .btn-cta {
+            background: linear-gradient(to right, #2563eb, #a855f7);
+            padding: 0.75rem 1.5rem;
+            border-radius: 9999px;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        .btn-cta:hover {
+            transform: scale(1.05);
+            background: linear-gradient(to right, #1e40af, #7e22ce);
+        }
+        .btn-test {
+            background: linear-gradient(to right, #10b981, #059669);
+            padding: 1rem 2rem;
+            border-radius: 9999px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+        .btn-test:hover {
+            transform: scale(1.1);
+            background: linear-gradient(to right, #047857, #065f46);
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #2563eb, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        @supports (-webkit-background-clip: text) {
+            .gradient-text {
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        }
+        @supports not (-webkit-background-clip: text) {
+            .gradient-text {
+                color: #2563eb;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <!-- Навігаційне меню -->
+    <nav class="fixed top-0 left-0 w-full bg-gradient-to-r from-blue-700 to-purple-600 text-white py-4 z-50 shadow-2xl">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <a href="/" class="text-3xl font-extrabold tracking-tight">SkillBridge 🧮</a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="home.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Головна</a>
+                    <a href="about.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Про нас</a>
+                    <a href="course.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Курси</a>
+                    <a href="math.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Математика</a>
+                    <a href="programming.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Програмування</a>
+                    <a href="blog.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Блог</a>
+                    <a href="login.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
+                </div>
+                <button id="hamburger-btn" class="md:hidden flex flex-col space-y-1 hamburger">
+                    <div class="bar1 w-8 h-1 bg-white rounded"></div>
+                    <div class="bar2 w-8 h-1 bg-white rounded"></div>
+                    <div class="bar3 w-8 h-1 bg-white rounded"></div>
+                </button>
+            </div>
+            <div id="mobile-menu" class="md:hidden menu-slide mt-4 bg-gray-800 text-gray-100 rounded-xl p-4 shadow-lg">
+                <a href="home.html" class="block text-lg font-medium hover:text-blue-200 transition duration-200">Головна</a>
+                <a href="about.html" class="block text-lg font-medium hover:text-blue-200 transition duration-200">Про нас</a>
+                <a href="course.html" class="block text-lg font-medium hover:text-blue-200 transition duration-200">Курси</a>
+                <a href="math.html" class="block text-lg font-medium hover:text-blue-200 transition duration-200">Математика</a>
+                <a href="programming.html" class="block text-lg font-medium hover:text-blue-200 transition duration-200">Програмування</a>
+                <a href="blog.html" class="block text-lg font-medium hover:text-blue-200 transition duration-200">Блог</a>
+                <a href="login.html" class="block text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Геройський блок -->
+    <section class="hero-bg text-center text-white">
+        <div class="container mx-auto px-4 py-16">
+            <h1 class="text-5xl md:text-6xl font-extrabold mb-6 gradient-text">Матеріали для програмування – SkillBridge</h1>
+            <p class="text-xl md:text-2xl mb-10 leading-relaxed">Кодуй з розумінням — від простого до складного! 💻</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-6">
+                <a href="course.html" class="text-white px-8 py-4 rounded-xl text-lg font-semibold btn-cta">Доєднатися до наших курсів</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Рівні навчання -->
+    <section id="levels" class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-100 gradient-text">Рівні навчання</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">🎮</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Scratch для початківців</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Створення ігор та анімацій для дітей.</p>
+                    <a href="#scratch" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Переглянути</a>
+                </div>
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">🐍</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Python для новачків</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Основи програмування на Python.</p>
+                    <a href="#python" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Переглянути</a>
+                </div>
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">🌐</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Веб-програмування</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">HTML, CSS, JavaScript для створення сайтів.</p>
+                    <a href="#web" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Переглянути</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scratch для початківців -->
+    <section id="scratch" class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-100 gradient-text">Scratch для початківців</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-course="scratch" data-type="basics" data-format="pdf">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📘</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Основи Scratch</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Вступ до програмування , знайомство із інтерфейсом .</p>
+                    <p class="text-sm text-gray-500 mb-4">Початковий рівень, 7px років</p>
+                    <a href="https://www.canva.com/design/DAGt6fW4twI/POiu1x4HQREPD1hjZAcL4w/edit?utm_content=DAGt6fW4twI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Завантажити PDF</a>
+                </div>
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-course="scratch" data-type="animation" data-format="video">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">🎥</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Анімація в Scratch</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Інтерактивне відео для створення анімацій.</p>
+                    <p class="text-sm text-gray-500 mb-4">Початковий рівень, 8–12 років</p>
+                    <a href="https://youtu.be/hHc4-CYszpA?si=-ejjmxzSa6KgdvRY" target="_blank" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Дивитись відео</a>
+                </div>
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-course="scratch" data-type="game" data-format="test">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📝</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Тест зі Scratch</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Перевірка знань зі створення ігор.</p>
+                    <p class="text-sm text-gray-500 mb-4">Початковий рівень, 8–12 років</p>
+                    <a href="https://wordwall.net/play/95095/117/353" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-test inline-block text-center">Пройти тест</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Python для новачків -->
+    <section id="python" class="py-16 bg-gray-900">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-100 gradient-text">Python для новачків</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-course="python" data-type="basics" data-format="pdf">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📘</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Вступ до Python</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Основи синтаксису та змінних.</p>
+                    <p class="text-sm text-gray-500 mb-4">Початковий рівень, 12–16 років</p>
+                    <a href="https://www.canva.com/design/DAGt_LB3ZP4/dQA9cnWmXOfnVlS4pcL2sA/edit?utm_content=DAGt_LB3ZP4&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Завантажити PDF</a>
+                </div>
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-course="python" data-type="loops" data-format="video">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">🎥</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Цикли в Python</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Відео з поясненнями циклів for і while.</p>
+                    <p class="text-sm text-gray-500 mb-4">Початковий рівень, 12–16 років</p>
+                    <a href="https://youtu.be/GgRYasr6PoU?si=3PwY9KA51sUFizzp" target="_blank" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Дивитись відео</a>
+                </div>
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-course="python" data-type="basics" data-format="test">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📝</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Тест з основ Python</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Перевірка базових знань Python.</p>
+                    <p class="text-sm text-gray-500 mb-4">Початковий рівень, 12–16 років</p>
+                    <a href="https://wordwall.net/play/95125/518/157" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-test inline-block text-center">Пройти тест</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Веб-програмування -->
+    <section id="web" class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-100 gradient-text">Веб-програмування</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-course="web" data-type="html" data-format="pdf">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📘</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Основи HTML</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Створення структури веб-сторінок.</p>
+                    <p class="text-sm text-gray-500 mb-4">Середній рівень, 14–18 років</p>
+                    <a href="https://www.canva.com/design/DAGt_NElBrM/nqXxtdxeYqll9X2VhfR3KQ/edit?utm_content=DAGt_NElBrM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Завантажити PDF</a>
+                </div>
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-course="web" data-type="css" data-format="video">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">🎥</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Структура HTML</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Відеоурок зі стилізації веб-сторінок.</p>
+                    <p class="text-sm text-gray-500 mb-4">Середній рівень, 14–18 років</p>
+                    <a href="https://youtu.be/qtLa7uqHNwI?si=3TpHL7fihp8qZ8lW" target="_blank" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block text-center">Дивитись відео</a>
+                </div>
+                <div class="material-card border-2 border-blue-900 rounded-xl p-6 shadow-lg" data-course="web" data-type="javascript" data-format="test">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">📝</span>
+                        <h3 class="text-xl font-semibold text-gray-100">Тест з JavaScript</h3>
+                    </div>
+                    <p class="text-gray-400 mb-4">Перевірка знань з основ JavaScript.</p>
+                    <p class="text-sm text-gray-500 mb-4">Середній рівень, 14–18 років</p>
+                    <a href="https://wordwall.net/play/95126/221/603" class="mt-auto text-white px-6 py-3 rounded-lg text-lg font-semibold btn-test inline-block text-center">Пройти тест</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Футер -->
+    <footer class="bg-gradient-to-r from-blue-700 to-purple-600 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3>Контакти</h3>
+                    <p class="text-white">📧 info:SkillBridgeUA@gmail.com</p>
+                    <p class="text-white">Telegram: @SkillBridgeUA</p>
+                    <p class="text-white">Instagram: @SkillBridgeUA</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold">Інформація</h3>
+                    <a href="privac.html" class="block hover:text-blue-300 transition duration-200">Політика конфіденційності</a>
+                </div>
+            </div>
+            <p class="text-center mt-4 text-gray-300">Оновлено: 09:19 AM EEST, Thursday, July 17, 2025</p>
+            <p class="text-center mt-2 text-gray-300">© 2025 BrainHub. Усі права захищено.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Фільтрація матеріалів
+        function filterMaterials(filter) {
+            const sections = ['#scratch', '#python', '#web'];
+            sections.forEach(section => {
+                const cards = document.querySelectorAll(`${section} .material-card`);
+                cards.forEach(card => {
+                    const courseFilter = card.getAttribute('data-course');
+                    const typeFilter = card.getAttribute('data-type');
+                    const formatFilter = card.getAttribute('data-format');
+                    if (filter === 'all' || courseFilter === filter || typeFilter === filter || formatFilter === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // Гамбургер-меню
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburgerBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+            hamburgerBtn.classList.toggle('open');
+        });
+
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+                hamburgerBtn.classList.remove('open');
+            });
+        });
+    </script>
+</body>
+</html>
+>>>>>>> 80f0ef3ac22c6cdd502c0ac2c500f792fd868571

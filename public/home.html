@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -292,4 +293,301 @@
         });
     </script>
 </body>
+=======
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkillBridge - Онлайн-школа математики та програмування</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .hero-bg {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+        }
+        .menu-slide {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .menu-slide.open {
+            max-height: 500px;
+            opacity: 1;
+        }
+        .hamburger div {
+            transition: all 0.3s ease;
+        }
+        .hamburger.open .bar1 {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.open .bar2 {
+            opacity: 0;
+        }
+        .hamburger.open .bar3 {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+        section {
+            padding-top: 96px;
+        }
+        .course-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            background: linear-gradient(145deg, #1f2937, #374151);
+        }
+        .course-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        .btn-cta {
+            transition: transform 0.3s ease;
+        }
+        .btn-cta:hover {
+            transform: scale(1.05);
+            background: linear-gradient(to right, #2563eb, #a855f7);
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #2563eb, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <nav class="fixed top-0 left-0 w-full bg-gradient-to-r from-blue-700 to-purple-600 text-white py-4 z-50 shadow-2xl">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <a href="/" class="text-3xl font-extrabold tracking-tight">SkillBridge 🌟</a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="home.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Головна</a>
+                    <a href="about.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Про нас</a>
+                    <a href="course.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Курси</a>
+                    <a href="math.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Математика</a>
+                    <a href="programming.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Програмування</a>
+                    <a href="blog.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Блог</a>
+                    <a href="login.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
+                </div>
+                <button id="hamburger-btn" class="md:hidden flex flex-col space-y-1 hamburger">
+                    <div class="bar1 w-8 h-1 bg-white rounded"></div>
+                    <div class="bar2 w-8 h-1 bg-white rounded"></div>
+                    <div class="bar3 w-8 h-1 bg-white rounded"></div>
+                </button>
+            </div>
+            <div id="mobile-menu" class="md:hidden menu-slide mt-4 bg-gray-800 text-gray-100 rounded-xl p-4 shadow-lg">
+                <a href="about.html" class="block py-2 text-lg font-medium hover:text-blue-300 transition duration-200">Про нас</a>
+                <a href="course.html" class="block py-2 text-lg font-medium hover:text-blue-300 transition duration-200">Курси</a>
+                <a href="math.html" class="block py-2 text-lg font-medium hover:text-blue-300 transition duration-200">Математика</a>
+                <a href="programming.html" class="block py-2 text-lg font-medium hover:text-blue-300 transition duration-200">Програмування</a>
+                <a href="blog.html" class="block py-2 text-lg font-medium hover:text-blue-300 transition duration-200">Блог</a>
+                <a href="login.html" class="block py-2 text-lg font-medium hover:text-blue-300 transition duration-200">Особистий кабінет</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-bg text-center text-white">
+        <div class="container mx-auto px-4 py-16">
+            <h1 class="text-5xl md:text-6xl font-extrabold mb-6 gradient-text">Онлайн-школа математики та програмування</h1>
+            <p class="text-xl md:text-2xl mb-10 leading-relaxed">Навчайся легко, цікаво і з користю — від основ до професійних навичок 🚀</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-6">
+                <a href="course.html" class="bg-gradient-to-r from-blue-600 to-purple-500 text-white px-8 py-4 rounded-xl text-lg font-semibold btn-cta">Записатись на безкоштовний урок</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+        <div class="container mx-auto px-4">
+            <div class="relative bg-gray-800 rounded-2xl p-8 shadow-2xl border-4 border-gradient-to-r from-blue-600 via-purple-500 to-pink-500 transform hover:scale-[1.02] transition-all duration-300">
+                <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-600 to-purple-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                    SkillBridge
+                </div>
+                <h2 class="text-4xl font-extrabold text-center mb-8 text-gray-100 tracking-tight">Хто ми? 🌟</h2>
+                <div class="space-y-6 text-gray-300 leading-relaxed">
+                    <p class="text-lg flex items-start">
+                        <span class="text-2xl mr-2">🚀</span>
+                        <span><strong>SkillBridge</strong> — це онлайн-школа, де математика та програмування оживають! Ми — команда захоплених викладачів, які не просто пояснюють, а надихають. Навчаємо дітей віком від <strong>10 до 18 років</strong>, допомагаємо зрозуміти складне, повірити в себе і отримати реальні результати.</span>
+                    </p>
+                    <p class="text-lg flex items-start">
+                        <span class="text-2xl mr-2">🌉</span>
+                        <span>Ми створили SkillBridge, щоб стати <strong>містком між шкільною теорією і практичними навичками</strong>, які справді потрібні в житті. Ти можеш підтягнути математику, впевнено скласти НМТ або створити свою першу гру на Python — усе це можливо з нами.</span>
+                    </p>
+                    <p class="text-lg flex items-start">
+                        <span class="text-2xl mr-2">💡</span>
+                        <span>Ми не просто навчаємо — ми <strong>розвиваємо мислення, креативність та впевненість</strong>. SkillBridge — це простір, де кожна дитина відчуває себе важливою, де кожен урок — це нове відкриття. Приєднуйся до спільноти, яка надихає!</span>
+                    </p>
+                </div>
+                
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mt-12">
+                <div class="text-center p-6 bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition duration-200">
+                    <span class="text-4xl mb-4 block">📚</span>
+                    <p class="text-lg font-semibold text-gray-100">Індивідуальний підхід</p>
+                    <p class="text-sm text-gray-400">Працюємо з кожним учнем так, щоб він зрозумів і досяг успіху</p>
+                </div>
+                <div class="text-center p-6 bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition duration-200">
+                    <span class="text-4xl mb-4 block">😊</span>
+                    <p class="text-lg font-semibold text-gray-100">Дружня атмосфера</p>
+                    <p class="text-sm text-gray-400">На уроках — без страху ставити питання та помилятися</p>
+                </div>
+                <div class="text-center p-6 bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition duration-200">
+                    <span class="text-4xl mb-4 block">🖱️</span>
+                    <p class="text-lg font-semibold text-gray-100">Інтерактивна практика</p>
+                    <p class="text-sm text-gray-400">Навчаємось через дії: коди, задачі, візуалізація</p>
+                </div>
+                <div class="text-center p-6 bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition duration-200">
+                    <span class="text-4xl mb-4 block">🗣️</span>
+                    <p class="text-lg font-semibold text-gray-100">Зрозуміле пояснення</p>
+                    <p class="text-sm text-gray-400">Складне стає простим — ми пояснюємо як друзям</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="courses" class="py-16 bg-gray-900">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-100 gradient-text">Наші курси </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="course-card border-2 border-blue-900 rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">🧮</span>
+                        <h3 class="text-2xl font-semibold text-gray-100">Математика</h3>
+                    </div>
+                    <p class="italic text-gray-400 mb-4">Підготовка до ЗНО, алгебра, геометрія</p>
+                    <ul class="list-disc list-inside text-gray-400 mb-6 space-y-2">
+                        <li>Підготовка до НМТ/ЗНО</li>
+                        <li>Теми: дроби, рівняння, геометрія</li>
+                        <li>7–11 клас, пояснення складного простими словами</li>
+                        <li>Домашні завдання з перевіркою</li>
+                        <li>Маленькі групи / індивідуально</li>
+                    </ul>
+                    <div class="mt-auto text-center">
+                        <a href="math.html" class="bg-gradient-to-r from-blue-600 to-purple-500 text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block">Дізнатись більше</a>
+                    </div>
+                </div>
+                <div class="course-card border-2 border-blue-900 rounded-xl p-6 shadow-lg">
+                    <div class="flex items-center mb-4">
+                        <span class="text-4xl mr-3">💻</span>
+                        <h3 class="text-2xl font-semibold text-gray-100">Програмування</h3>
+                    </div>
+                    <p class="italic text-gray-400 mb-4">Scratch, Python, Web</p>
+                    <ul class="list-disc list-inside text-gray-400 mb-6 space-y-2">
+                        <li>Scratch для дітей 10–12 років (ігри, логіка)</li>
+                        <li>Python — базовий синтаксис, проєкти</li>
+                        <li>Web — створення власного сайту (HTML/CSS/JS)</li>
+                        <li>Практика з кожного уроку</li>
+                        <li>Безпечне навчання в Zoom</li>
+                    </ul>
+                    <div class="mt-auto text-center">
+                        <a href="programming.html" class="bg-gradient-to-r from-blue-600 to-purple-500 text-white px-6 py-3 rounded-lg text-lg font-semibold btn-cta inline-block">Дізнатись більше</a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center mt-12">
+                <a href="course.html" class="bg-gradient-to-r from-blue-600 to-purple-500 text-white px-8 py-4 rounded-xl text-lg font-semibold btn-cta">📚 Детальніше про всі курси</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-extrabold text-center mb-12 text-gray-100 gradient-text">Що про нас говорять </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="border-2 border-blue-900 rounded-xl p-6 shadow-md hover:shadow-lg transition duration-200 text-center bg-gray-800">
+                    <p class="text-gray-300 mb-4 leading-relaxed">"Дуже цікаві уроки! Вчитель пояснює складні теми так, що все стає зрозуміло."</p>
+                    <p class="font-semibold text-gray-100">Олена</p>
+                </div>
+                <div class="border-2 border-blue-900 rounded-xl p-6 shadow-md hover:shadow-lg transition duration-200 text-center bg-gray-800">
+                    <p class="text-gray-300 mb-4 leading-relaxed">"Завдяки курсам я підготувався до ЗНО з математики на високий бал!"</p>
+                    <p class="font-semibold text-gray-100">Максим</p>
+                </div>
+                <div class="border-2 border-blue-900 rounded-xl p-6 shadow-md hover:shadow-lg transition duration-200 text-center bg-gray-800">
+                    <p class="text-gray-300 mb-4 leading-relaxed">"Програмування стало моїм хобі після занять у SkillBridge!"</p>
+                    <p class="font-semibold text-gray-100">Софія</p>
+                </div>
+            </div>
+        </div>
+    </section>
+            
+    <footer class="bg-gradient-to-r from-blue-700 to-purple-600 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3>Контакти</h3>
+                    <p>Телефон: +380 123 456 789</p>
+                    <p>Email: info@skillbridge.ua</p>
+                    <p>Telegram: @SkillBridge</p>
+                    <p>Instagram: @SkillBridgeUA</p>
+                </div>
+                <div>
+                    <h3>Інформація</h3>
+                    <a href="privac.html" class="block hover:text-blue-300 transition duration-200">Політика конфіденційності</a>
+                </div>
+            </div>
+            <p class="text-center mt-8 text-gray-300">© 2025 SkillBridge. Усі права захищено.</p>
+        </div>
+    </footer>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('signup-form');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = form.querySelector('input[name="name"]').value.trim();
+            const contact = form.querySelector('input[name="contact"]').value.trim();
+            const course = form.querySelector('select[name="course"]').value;
+            const format = form.querySelector('select[name="format"]').value;
+
+            if (!name || !contact || !course || !format) {
+                alert("Будь ласка, заповніть усі поля");
+                return;
+            }
+
+            try {
+                const response = await fetch('/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, contact, course, format })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message);
+                    form.reset();
+                } else {
+                    throw new Error(result.message || 'Помилка при надсиланні форми');
+                }
+            } catch (err) {
+                console.error('Fetch error at 09:01 AM EEST, 14 Jul 2025:', err.message);
+                alert(`Сталася помилка: ${err.message}. Перевірте консоль для деталей.`);
+            }
+        });
+    });
+    </script>
+
+    <script>
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburgerBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+            hamburgerBtn.classList.toggle('open');
+        });
+
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+                hamburgerBtn.classList.remove('open');
+            });
+        });
+    </script>
+</body>
+>>>>>>> 80f0ef3ac22c6cdd502c0ac2c500f792fd868571
 </html>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -247,3 +248,255 @@
     </script>
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Блог - SkillBridge</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .menu-slide {
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .menu-slide.open {
+            max-height: 500px;
+            opacity: 1;
+        }
+        .hamburger div {
+            transition: all 0.3s ease;
+        }
+        .hamburger.open .bar1 {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        .hamburger.open .bar2 {
+            opacity: 0;
+        }
+        .hamburger.open .bar3 {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+        section {
+            padding-top: 96px;
+        }
+        .modal {
+            transition: opacity 0.3s ease-in-out;
+            display: none;
+            opacity: 0;
+        }
+        .modal.open {
+            display: flex;
+            opacity: 1;
+        }
+        .blog-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: linear-gradient(145deg, #1f2937, #374151);
+            cursor: pointer;
+        }
+        .blog-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #2563eb, #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .modal-content {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-content p {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100">
+    <nav class="fixed top-0 left-0 w-full bg-gradient-to-r from-blue-700 to-purple-600 text-white py-4 z-50 shadow-2xl">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center">
+                <a href="/" class="text-3xl font-extrabold tracking-tight">SkillBridge 🌟</a>
+                <div class="hidden md:flex space-x-8">
+                    <a href="home.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Головна</a>
+                    <a href="about.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Про нас</a>
+                    <a href="course.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Курси</a>
+                    <a href="math.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Математика</a>
+                    <a href="programming.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Програмування</a>
+                    <a href="blog.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Блог</a>
+                    <a href="login.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
+                </div>
+                <button id="hamburger-btn" class="md:hidden flex flex-col space-y-1 hamburger">
+                    <div class="bar1 w-8 h-1 bg-white rounded"></div>
+                    <div class="bar2 w-8 h-1 bg-white rounded"></div>
+                    <div class="bar3 w-8 h-1 bg-white rounded"></div>
+                </button>
+            </div>
+            <div id="mobile-menu" class="md:hidden menu-slide mt-4 bg-gray-800 text-gray-100 rounded-xl p-4 shadow-lg">
+                <a href="home.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Головна</a>
+                <a href="about.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Про нас</a>
+                <a href="course.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Курси</a>
+                <a href="math.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Математика</a>
+                <a href="programming.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Програмування</a>
+                <a href="blog.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Блог</a>
+                <a href="login.html" class="text-lg font-medium hover:text-blue-200 transition duration-200">Особистий кабінет</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-16 bg-gradient-to-b from-gray-900 to-gray-800">
+        <div class="container mx-auto px-4">
+            <h1 class="text-5xl font-extrabold text-center mb-6 gradient-text">Блог SkillBridge</h1>
+            <p class="text-xl text-center mb-10 text-gray-300">Статті, поради та новини про математику, програмування, підготовку до ЗНО та корисні лайфхаки. Дізнайтесь, як зробити навчання цікавим та ефективним!</p>
+        </div>
+    </section>
+
+    <section class="py-16 bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center mb-12">
+                <h2 class="text-4xl font-extrabold gradient-text">Статті, поради, новини</h2>
+            </div>
+            <div id="blog-posts" class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div id="posts-loader" class="loader"></div>
+            </div>
+        </div>
+    </section>
+
+    <div id="view-post-modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-gray-800 p-6 rounded-xl shadow-lg max-w-2xl w-full modal-content">
+            <button id="close-view-modal-btn" class="text-2xl text-gray-300 hover:text-gray-100 float-right">✕</button>
+            <h2 id="view-post-title" class="text-2xl font-semibold text-gray-100 mb-4"></h2>
+            <p id="view-post-description" class="text-gray-400 mb-4"></p>
+            <p id="view-post-date" class="text-sm text-gray-500 mb-4"></p>
+            <div id="view-post-content" class="text-gray-300 leading-relaxed"></div>
+        </div>
+    </div>
+
+    <footer class="bg-gradient-to-r from-blue-700 to-purple-600 text-white py-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Контакти</h3>
+                    <p>📞 +380 123 456 789</p>
+                    <p>📧 info@skillbridge.ua</p>
+                    <p>Telegram: @SkillBridge</p>
+                    <p>Instagram: @SkillBridgeUA</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Інформація</h3>
+                    <a href="privac.html" class="block hover:text-blue-300 transition duration-200">Політика конфіденційності</a>
+                </div>
+            </div>
+            <p class="text-center mt-8 text-gray-300">© 2025 SkillBridge. Усі права захищено.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Hamburger menu toggle
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburgerBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('open');
+            hamburgerBtn.classList.toggle('open');
+        });
+
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+                hamburgerBtn.classList.remove('open');
+            });
+        });
+
+        // Modal toggle for viewing post
+        const viewPostModal = document.getElementById('view-post-modal');
+        const closeViewModalBtn = document.getElementById('close-view-modal-btn');
+
+        closeViewModalBtn.addEventListener('click', () => {
+            viewPostModal.classList.remove('open');
+        });
+
+        // Escape HTML to prevent XSS
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        // Fetch blog posts
+        async function fetchBlogPosts() {
+            const postsLoader = document.getElementById('posts-loader');
+            const blogPosts = document.getElementById('blog-posts');
+            postsLoader.style.display = 'block';
+            try {
+                console.log('Завантаження статей з /api/blog...');
+                const response = await fetch('/api/blog');
+                if (!response.ok) {
+                    throw new Error(`Помилка HTTP: ${response.status} ${response.statusText}`);
+                }
+                const posts = await response.json();
+                console.log('Отримано статті:', posts);
+
+                blogPosts.innerHTML = '';
+                if (!posts || posts.length === 0) {
+                    blogPosts.innerHTML = '<p class="text-gray-400 text-center">Статті відсутні.</p>';
+                    return;
+                }
+
+                posts.forEach(post => {
+                    if (!post._id) {
+                        console.error('Помилка: стаття без _id:', post);
+                        return;
+                    }
+                    const postDiv = document.createElement('div');
+                    postDiv.className = 'blog-card border-2 border-blue-900 rounded-xl p-6 shadow-lg';
+                    postDiv.innerHTML = `
+                        <h3 class="text-xl font-semibold text-gray-100 mb-2">${escapeHTML(post.title)}</h3>
+                        <p class="text-gray-400 mb-4">${escapeHTML(post.description)}</p>
+                        <p class="text-sm text-gray-500">Опубліковано: ${new Date(post.publishedAt).toLocaleDateString('uk-UA')}</p>
+                    `;
+                    postDiv.addEventListener('click', () => {
+                        console.log('Відкриття статті:', post._id);
+                        document.getElementById('view-post-title').textContent = post.title;
+                        document.getElementById('view-post-description').textContent = post.description;
+                        document.getElementById('view-post-date').textContent = `Опубліковано: ${new Date(post.publishedAt).toLocaleDateString('uk-UA')}`;
+                        const paragraphs = post.content.split('\n').filter(p => p.trim() !== '').map(p => `<p>${escapeHTML(p)}</p>`).join('');
+                        document.getElementById('view-post-content').innerHTML = paragraphs;
+                        viewPostModal.classList.add('open');
+                    });
+                    blogPosts.appendChild(postDiv);
+                });
+            } catch (error) {
+                console.error('Помилка при отриманні статей:', error.message);
+                blogPosts.innerHTML = `<p class="text-red-400 text-center">Сталася помилка: ${escapeHTML(error.message)}. Спробуйте ще раз.</p>`;
+            } finally {
+                postsLoader.style.display = 'none';
+            }
+        }
+
+        // Load blog posts on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Сторінка blog.html завантажена');
+            fetchBlogPosts();
+        });
+    </script>
+</body>
+</html>
+>>>>>>> 80f0ef3ac22c6cdd502c0ac2c500f792fd868571
