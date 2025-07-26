@@ -14,16 +14,9 @@ app.use(express.json());
 app.use(express.static('public'));
 
 // MongoDB connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/skillbridge';
-mongoose.connect(MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
-    console.log('Connected to MongoDB');
-}).catch(err => {
-    console.error('MongoDB connection error:', err.message, err.stack);
-    process.exit(1);
-});
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log(err));
 
 // User Schema
 const userSchema = new mongoose.Schema({
@@ -65,10 +58,21 @@ const teacherSchema = new mongoose.Schema({
         meetLink: String,
         materialsLink: String
     }],
-    password: String
+    password: String,
+    tracker: String // Додано поле tracker
 });
 
 const Teacher = mongoose.model('Teacher', teacherSchema);
+
+// Tracker Schema
+const trackerSchema = new mongoose.Schema({
+    teacherId: { type: mongoose.Schema.Types.ObjectId, ref: 'Teacher', required: true },
+    date: { type: Date, default: Date.now },
+    activity: { type: String, required: true },
+    details: { type: String, required: true }
+});
+
+const Tracker = mongoose.model('Tracker', trackerSchema);
 
 // Course Schema
 const courseSchema = new mongoose.Schema({
@@ -164,8 +168,8 @@ app.post('/api/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const user = new User({
-            name,
-            email,
+            name: sanitizeHtml(name),
+            email: sanitizeHtml(email),
             password: hashedPassword,
             registered: new Date(),
             language: 'uk',
@@ -216,8 +220,8 @@ app.post('/api/teacher-register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const teacher = new Teacher({
-            name,
-            email,
+            name: sanitizeHtml(name),
+            email: sanitizeHtml(email),
             teachesCourses: teachesCourses || [],
             individualLessons: individualLessons || [],
             password: hashedPassword
@@ -455,7 +459,7 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
                 email: user.email,
                 registered: user.registered,
                 language: user.language,
-                courses: user.courses,
+                courses:  user.courses,
                 schedule: user.schedule,
                 reviews: reviews.map(review => review.text)
             });
@@ -495,7 +499,7 @@ app.get('/api/teacher-profile', authenticateToken, async (req, res) => {
                 courseId: course.id || 'Невідомо',
                 name: course.name || 'Невідомо',
                 groupNumber: course.groupNumber || 'Невідомо',
-                materialsLink: course.materialsLink || courseMap[course.name] || '#' // Використовуємо materialsLink із teacher.teachesCourses або Course
+                materialsLink: course.materialsLink || courseMap[course.name] || '#'
             })) : [],
             individualLessons: Array.isArray(teacher.individualLessons) ? teacher.individualLessons.map(lesson => ({
                 individualId: lesson._id ? lesson._id.toString() : 'Невідомо',
@@ -503,14 +507,85 @@ app.get('/api/teacher-profile', authenticateToken, async (req, res) => {
                 lesson: lesson.lesson || 'Невідомо',
                 courseName: lesson.courseName || 'Невідомо',
                 meetLink: lesson.meetLink || '#',
-                materialsLink: lesson.materialsLink || '#' // Використовуємо materialsLink
-            })) : []
+                materialsLink: lesson.materialsLink || '#'
+            })) : [],
+            tracker: teacher.tracker || '#' // Додано поле tracker
         };
 
         console.log('Teacher profile response:', response);
         res.json(response);
     } catch (error) {
         console.error('Error fetching teacher profile for ID:', req.user.teacherId, error.message, error.stack);
+        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
+    }
+});
+
+// Teacher Tracker API endpoint (GET)
+app.get('/api/teacher-tracker', authenticateToken, async (req, res) => {
+    try {
+        console.log('Fetching tracker data for teacher ID:', req.user.teacherId);
+        const trackerEntries = await Tracker.find({ teacherId: req.user.teacherId }).sort({ date: -1 }).lean();
+        console.log('Raw tracker entries:', trackerEntries);
+        if (!trackerEntries || trackerEntries.length === 0) {
+            console.warn('No tracker entries found for teacher ID:', req.user.teacherId);
+            return res.json([]);
+        }
+        console.log('Tracker entries found:', trackerEntries.length);
+        const response = trackerEntries.map(entry => ({
+            id: entry._id.toString(),
+            date: entry.date,
+            activity: sanitizeHtml(entry.activity) || 'Невідомо',
+            details: sanitizeHtml(entry.details) || 'Немає деталей'
+        }));
+        res.json(response);
+    } catch (error) {
+        console.error('Error fetching tracker data for teacher ID:', req.user.teacherId, error.message, error.stack);
+        res.status(500).json({ message: `Помилка сервера: ${error.message}` });
+    }
+});
+
+// Teacher Tracker API endpoint (POST)
+app.post('/api/teacher-tracker', authenticateToken, async (req, res) => {
+    try {
+        const { activity, details } = req.body;
+        if (!activity || !details) {
+            return res.status(400).json({ message: 'Поля activity та details є обов’язковими' });
+        }
+
+        // Validate and sanitize inputs
+        const sanitizedActivity = sanitizeHtml(activity, { allowedTags: [], allowedAttributes: {} });
+        const sanitizedDetails = sanitizeHtml(details, { allowedTags: [], allowedAttributes: {} });
+        if (!sanitizedActivity || !sanitizedDetails) {
+            return res.status(400).json({ message: 'Недійсні дані для activity або details' });
+        }
+
+        // Verify teacher exists
+        const teacher = await Teacher.findById(req.user.teacherId);
+        if (!teacher) {
+            console.error('Teacher not found for ID:', req.user.teacherId);
+            return res.status(404).json({ message: 'Викладача не знайдено' });
+        }
+
+        const trackerEntry = new Tracker({
+            teacherId: req.user.teacherId,
+            date: new Date(),
+            activity: sanitizedActivity,
+            details: sanitizedDetails
+        });
+
+        await trackerEntry.save();
+        console.log('Tracker entry added:', trackerEntry);
+        res.status(201).json({ 
+            message: 'Запис у трекер успішно додано',
+            trackerEntry: {
+                id: trackerEntry._id.toString(),
+                date: trackerEntry.date,
+                activity: trackerEntry.activity,
+                details: trackerEntry.details
+            }
+        });
+    } catch (error) {
+        console.error('Error adding tracker entry:', error.message, error.stack);
         res.status(500).json({ message: `Помилка сервера: ${error.message}` });
     }
 });
@@ -576,10 +651,10 @@ app.post('/api/purchase', async (req, res) => {
         }
 
         const application = new Application({
-            name,
-            contact,
+            name: sanitizeHtml(name),
+            contact: sanitizeHtml(contact),
             format,
-            course,
+            course: sanitizeHtml(course),
             date: new Date(date)
         });
         await application.save();
@@ -608,8 +683,8 @@ app.post('/api/teachers', authenticateToken, async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         const teacher = new Teacher({
-            name,
-            email,
+            name: sanitizeHtml(name),
+            email: sanitizeHtml(email),
             teachesCourses: teachesCourses || [],
             individualLessons: individualLessons || [],
             password: hashedPassword
