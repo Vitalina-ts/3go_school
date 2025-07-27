@@ -1,4 +1,4 @@
-# BrainHub
+# Skillbridge
 
 <img width="1899" height="912" alt="image" src="https://github.com/user-attachments/assets/4790364b-bd3c-4c5d-a1dc-54083490960b" />
 
