@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const cors = require('cors');
 const sanitizeHtml = require('sanitize-html');
+const path = require('path');
 require('dotenv').config();
 
 const app = express();
@@ -12,13 +13,26 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5500',
-  process.env.FRONTEND_URL || 'https://your-frontend.onrender.com'
-];
+  'https://skillbridge-school-1.onrender.com',
+  process.env.FRONTEND_URL
+].filter(Boolean); // Видаляємо undefined/null значення
 app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
-app.use(express.static('public'));
 
-// Перевірка змінних середовища без завершення процесу
+// Перевірка існування папки public
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Маршрут для кореня, щоб віддавати index.html для SPA
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
+    if (err) {
+      console.error('Помилка відправки index.html:', err.message);
+      res.status(404).json({ message: 'Сторінку не знайдено' });
+    }
+  });
+});
+
+// Перевірка змінних середовища
 const { MONGO_URI, JWT_SECRET } = process.env;
 if (!MONGO_URI) {
   console.error('MONGO_URI не визначено у змінних середовища');
@@ -36,8 +50,6 @@ let isMongoConnected = false;
 const connectWithRetry = async () => {
   try {
     await mongoose.connect(MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
       serverSelectionTimeoutMS: 5000,
       maxPoolSize: 10
     });
@@ -46,9 +58,20 @@ const connectWithRetry = async () => {
   } catch (err) {
     console.error('Помилка підключення до MongoDB:', err.message);
     console.log('Повторна спроба через 5 секунд...');
+    isMongoConnected = false;
     setTimeout(connectWithRetry, 5000);
   }
 };
+
+// Додаткове логування стану підключення
+mongoose.connection.on('disconnected', () => {
+  console.error('Відключено від MongoDB');
+  isMongoConnected = false;
+  connectWithRetry();
+});
+mongoose.connection.on('error', (err) => {
+  console.error('Помилка MongoDB:', err.message);
+});
 
 if (MONGO_URI) {
   connectWithRetry();
