@@ -105,7 +105,7 @@
       const fetchTeacherProfile = async (retries = 3, delay = 1000) => {
         for (let i = 0; i < retries; i++) {
           try {
-            const response = await fetch('https://skillbridge-school-1.onrender.com//api/teacher-profile', {
+            const response = await fetch('https://skillbridge-school-1.onrender.com/api/teacher-profile', {
               method: 'GET',
               headers: {
                 'Authorization': `Bearer ${token}`,
@@ -114,6 +114,12 @@
             });
             if (!response.ok) {
               const errorText = await response.text();
+              if (response.status === 401) {
+                alert('Сесія закінчилася. Будь ласка, увійдіть знову.');
+                localStorage.removeItem('teacher-token');
+                window.location.href = 'login_teachers.html';
+                return null;
+              }
               throw new Error(`Помилка при отриманні профілю: ${response.status} ${response.statusText} - ${errorText}`);
             }
             const data = await response.json();
@@ -156,7 +162,11 @@
         const teacherData = await fetchTeacherProfile();
         if (!teacherData) {
           const coursesList = document.getElementById('courses-list');
-          coursesList.innerHTML = '<li class="p-2 bg-gray-700 rounded error-message">Помилка завантаження даних. Перевірте консоль для деталей.</li>';
+          const lessonsList = document.getElementById('lessons-list');
+          const teacherInfo = document.getElementById('teacher-info');
+          teacherInfo.innerHTML = '<p class="p-2 bg-gray-700 rounded error-message">Помилка: Не вдалося завантажити профіль викладача. Перевірте підключення до сервера або увійдіть знову.</p>';
+          coursesList.innerHTML = '<li class="p-2 bg-gray-700 rounded error-message">Немає даних про курси через помилку сервера.</li>';
+          lessonsList.innerHTML = '<li class="p-2 bg-gray-700 rounded error-message">Немає даних про заняття через помилку сервера.</li>';
           return;
         }
 
