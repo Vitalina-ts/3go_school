@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Маршрут для кореня, щоб віддавати index.html для SPA
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
+  res.sendFile(path.join(__dirname, 'public', 'home.html'), (err) => {
     if (err) {
       console.error('Помилка відправки index.html:', err.message);
       res.status(404).json({ message: 'Сторінку не знайдено' });
