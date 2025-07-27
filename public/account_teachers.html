@@ -134,7 +134,7 @@
       // Функція для отримання даних студента за studentId
       const fetchStudentData = async (studentId) => {
         try {
-          const response = await fetch(`http://localhost:3000/api/profile?studentId=${studentId}`, {
+          const response = await fetch(`https://skillbridge-school-1.onrender.com/api/profile?studentId=${studentId}`, {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${token}`,
