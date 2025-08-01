@@ -2,53 +2,53 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
    <url>
       
-      <loc>https://threego-school.onrender.com/</loc>
+      <loc>https://threego-school-math-and-programming.onrender.com/</loc>
       <changefreq>weekly</changefreq>
       <priority>1.0</priority>
    </url>
    <url>
-      <loc>https://threego-school.onrender.com/about.html</loc>
+      <loc>https://threego-school-math-and-programming.onrender.com/about.html</loc>
    </url>
    <url>
-      <loc>https://threego-school.onrender.com/account.html</loc>
+      <loc>https://threego-school-math-and-programming.onrender.com/account.html</loc>
    </url>
    <url>
-      <loc>https://threego-school.onrender.com/account_teaches.html</loc>
+      <loc>https://threego-school-math-and-programming.onrender.com/.html</loc>
    </url>
    <url>
-      <loc>https://threego-school.onrender.com/course.html</loc>
+      <loc>https://threego-school-math-and-programming.onrender.com/course.html</loc>
    </url>
    <url>
       <loc>https://threego-school.onrender.com/blog.html</loc> <!-- якщо назва блогу blog.html -->
    </url>
    <url>
-      <loc>https://threego-school.onrender.com/home.html</loc>
+      <loc>https://threego-school-math-and-programming.onrender.com/home.html</loc>
    </url>
    <url>
-      <loc>https://threego-school.onrender.com/login.html</loc>
+      <loc>https://threego-school-math-and-programming.onrender.com/login.html</loc>
    </url>
    <url>
-      <loc>https://threego-school.onrender.com/login_teachers.html</loc>
+      <loc>https://threego-school-math-and-programming.onrender.com/login_teachers.html</loc>
    </url>
    <url>
-      <loc>https://threego-school.onrender.com/math.html</loc>
+      <loc>https://threego-school-math-and-programming.onrender.com/math.html</loc>
    </url>
    <url>
-      <loc>https://threego-school.onrender.com/math_tests.html</loc>
+      <loc>https://threego-school-math-and-programming.onrender.com/math_tests.html</loc>
    </url>
    <url>
-      <loc>https://threego-school.onrender.com/privac.html</loc>
+      <loc>https://threego-school-math-and-programming.onrender.com/privac.html</loc>
    </url>
    <url>
-      <loc>https://threego-school.onrender.com/programming.html</loc>
+      <loc>https://threego-school-math-and-programming.onrender.com/programming.html</loc>
    </url>
    <url>
-      <loc>https://threego-school.onrender.com/programming_tests.html</loc>
+      <loc>https://threego-school-math-and-programming.onrender.com/programming_tests.html</loc>
    </url>
    <url>
-      <loc>https://threego-school.onrender.com/register.html</loc>
+      <loc>https://threego-school-math-and-programming.onrender.com/register.html</loc>
    </url>
    <url>
-      <loc>https://threego-school.onrender.com/register_teachers.html</loc>
+      <loc>https://threego-school-math-and-programming.onrender.com/register_teachers.html</loc>
    </url>
 </urlset>
