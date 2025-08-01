@@ -239,44 +239,7 @@
         </div>
     </footer>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('signup-form');
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const name = form.querySelector('input[name="name"]').value.trim();
-            const contact = form.querySelector('input[name="contact"]').value.trim();
-            const course = form.querySelector('select[name="course"]').value;
-            const format = form.querySelector('select[name="format"]').value;
-
-            if (!name || !contact || !course || !format) {
-                alert("Будь ласка, заповніть усі поля");
-                return;
-            }
-
-            try {
-                const response = await fetch('/submit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, contact, course, format })
-                });
-
-                const result = await response.json();
-                if (response.ok) {
-                    alert(result.message);
-                    form.reset();
-                } else {
-                    throw new Error(result.message || 'Помилка при надсиланні форми');
-                }
-            } catch (err) {
-                console.error('Fetch error at 09:01 AM EEST, 14 Jul 2025:', err.message);
-                alert(`Сталася помилка: ${err.message}. Перевірте консоль для деталей.`);
-            }
-        });
-    });
-    </script>
 
     <script>
         const hamburgerBtn = document.getElementById('hamburger-btn');
