@@ -106,7 +106,7 @@
       const fetchTeacherProfile = async (retries = 3, delay = 1000) => {
         for (let i = 0; i < retries; i++) {
           try {
-            const response = await fetch('https://threego-school.onrender.com/api/teacher-profile', {
+            const response = await fetch('https://threego-school-math-and-programming.onrender.com/course.html/api/teacher-profile', {
               method: 'GET',
               headers: {
                 'Authorization': `Bearer ${token}`,
