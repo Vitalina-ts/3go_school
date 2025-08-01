@@ -25,7 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:5500',
-  'https://threego-school.onrender.com',
+  'https://threego-school-math-and-programming.onrender.com',
   process.env.FRONTEND_URL
 ].filter(Boolean); // Remove undefined/null values
 app.use(cors({ origin: allowedOrigins }));
